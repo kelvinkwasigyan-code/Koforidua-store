@@ -1,70 +1,114 @@
-import React, { useState } from 'react';
+'use client';
 
-const categories = ['All', 'Smartphones', 'Watches', 'Audio', 'Laptops', 'Accessories'];
+import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/store/CartContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
-const Header = () => {
-    const [activeCategory, setActiveCategory] = useState('All');
+export default function Header() {
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const { openCart, cartCount } = useCart();
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsUserMenuOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const phoneNumber = process.env.NEXT_PUBLIC_STORE_PHONE || "+233241234567";
 
     return (
-        <header className="bg-white shadow-sm sticky top-0 z-50">
-            {/* Top Announcement Bar */}
-            <div className="bg-slate-900 text-white text-xs py-2 px-4 text-center font-medium flex justify-between items-center max-w-7xl mx-auto">
-                <p>🚚 Delivery available across Ghana | Pay with Mobile Money & Cards</p>
-                <div className="hidden sm:flex space-x-4">
-                    <span>Contact Us</span>
-                    <span>FAQ</span>
-                </div>
+        <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/40 border-b border-white/60 shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all">
+            {/* Top Banner - Translucent Light Red Glass */}
+            <div className="backdrop-blur-md bg-red-500/85 text-white text-xs py-1.5 px-4 text-center font-medium shadow-inner flex items-center justify-between max-w-7xl mx-auto">
+                <span>🚚 Delivery available across Ghana</span>
+                <span>📞 Call/Order: <a href={`tel:${phoneNumber}`} className="underline font-bold">{phoneNumber}</a></span>
             </div>
 
-            {/* Main Header */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center space-x-2">
-                    <span className="text-xl font-bold text-gray-900 tracking-tight">
-                        Koforidua Store
-                    </span>
-                </div>
+            {/* Main Glass Navbar */}
+            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+                {/* Brand Logo */}
+                <Link href="/" className="font-bold text-lg sm:text-xl text-red-600 tracking-tight shrink-0">
+                    Joe Rich Phones & Accessories
+                </Link>
 
-                {/* Search Bar */}
-                <div className="flex-1 max-w-md mx-6 relative">
-                    <input
-                        type="text"
-                        placeholder="Search products, brands, categories..."
-                        className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* Glass Search Input */}
+                <div className="flex-1 max-w-md hidden md:block">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search products, brands, categories..."
+                            className="w-full bg-white/40 backdrop-blur-lg text-sm pl-9 pr-4 py-2 rounded-full border border-white/80 focus:border-red-400 focus:bg-white/70 focus:outline-none transition-all placeholder:text-gray-500 shadow-inner"
+                        />
+                        <svg
+                            className="w-4 h-4 text-red-500 absolute left-3 top-2.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
                 </div>
 
-                {/* Cart / Account */}
-                <div className="flex items-center space-x-4">
-                    <button className="flex items-center text-gray-700 font-medium text-sm hover:text-indigo-600">
-                        🛒 Cart <span className="ml-1 bg-indigo-600 text-white rounded-full text-xs px-2 py-0.5">0</span>
-                    </button>
-                </div>
-            </div>
+                {/* Right Actions */}
+                <div className="flex items-center space-x-3">
 
-            {/* Category Navigation Bar */}
-            <div className="border-b border-gray-200 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 flex space-x-6 overflow-x-auto py-2 scrollbar-none">
-                    {categories.map((cat) => (
+                    <ThemeToggle />
+
+                    {/* Profile Dropdown */}
+                    <div className="relative" ref={menuRef}>
                         <button
-                            key={cat}
-                            onClick={() => setActiveCategory(cat)}
-                            className={`text-sm whitespace-nowrap font-medium transition-colors ${activeCategory === cat
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600 font-semibold'
-                                    : 'text-gray-600 hover:text-gray-900'
-                                }`}
+                            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                            className="p-2 text-gray-700 hover:text-red-600 hover:bg-white/50 backdrop-blur-sm rounded-full transition-all border border-transparent hover:border-white/60"
+                            aria-label="User Account"
                         >
-                            {cat}
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
                         </button>
-                    ))}
+
+                        {/* Glass Popover Menu */}
+                        {isUserMenuOpen && (
+                            <div className="absolute right-0 mt-2 w-48 backdrop-blur-2xl bg-white/70 rounded-2xl shadow-2xl border border-white/80 p-4 z-50">
+                                <div className="flex flex-col space-y-3 text-center">
+                                    <Link
+                                        href="/login"
+                                        onClick={() => setIsUserMenuOpen(false)}
+                                        className="w-full bg-red-500/90 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-full text-sm transition shadow-md"
+                                    >
+                                        Log In
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        onClick={() => setIsUserMenuOpen(false)}
+                                        className="w-full text-gray-700 hover:text-red-600 font-medium text-xs transition py-1"
+                                    >
+                                        Create Account
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Glass Cart Button */}
+                    <button
+                        onClick={openCart}
+                        className="flex items-center space-x-2 bg-white/50 hover:bg-white/80 backdrop-blur-md text-red-700 px-3.5 py-1.5 rounded-full text-xs font-semibold transition border border-white/80 shadow-sm"
+                    >
+                        <span>🛒</span>
+                        <span className="bg-red-500 text-white rounded-full px-2 py-0.5 text-[11px] font-bold">
+                            {cartCount}
+                        </span>
+                    </button>
+
                 </div>
             </div>
         </header>
     );
-};
-
-export default Header;
+}

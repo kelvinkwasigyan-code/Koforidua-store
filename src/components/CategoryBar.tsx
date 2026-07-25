@@ -11,6 +11,7 @@ const categories = [
   { name: 'Smartphones', image: '/iphones.PNG' },
   { name: 'Tablets', image: '/tablet.PNG' },
   { name: 'Watches', image: '/Watches.png' },
+  { name: 'Speakers', image: '/speaker.PNG' },
   { name: 'Accessories', image: '/Covers.png' },
   { name: 'Fragrance & Scalp Care', image: '/fragrance.PNG' },
 ];

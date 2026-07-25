@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useCart } from '@/context/CartContext';
+import Link from 'next/link';
 
 const CartDrawer = () => {
     const { cart, isOpen, closeCart, removeFromCart, updateQuantity, subtotal } = useCart();
@@ -95,9 +96,9 @@ const CartDrawer = () => {
                                 <span>GH₵{Number(subtotal).toLocaleString()}</span>
                             </div>
                             <p className="text-xs text-gray-500">Shipping and taxes calculated at checkout.</p>
-                            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-sm transition">
+                            <Link href="/checkout" onClick={closeCart} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-sm transition flex items-center justify-center mt-3">
                                 Proceed to Checkout
-                            </button>
+                            </Link>
                         </div>
                     )}
 

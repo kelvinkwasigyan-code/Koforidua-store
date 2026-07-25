@@ -38,7 +38,7 @@ async function main() {
       description: '15W high-speed Qi-certified wireless charging pad for modern devices.',
       price: 120.00,
       stockQuantity: 25,
-      images: ['/airpods.PNG'],
+      images: ['/Covers.png'],
       categoryId: accessoriesCategory.id,
     },
     {

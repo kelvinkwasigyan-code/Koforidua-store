@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw, Send, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Send, CheckCircle2, Upload, X as XIcon, Loader2 } from 'lucide-react';
 
 export default function SwapSellPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({
     actionType: 'swap',
     deviceModel: '',
@@ -15,8 +17,61 @@ export default function SwapSellPage() {
     description: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setSelectedFiles((prev) => [...prev, ...filesArray].slice(0, 5)); // max 5 images
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
+    let uploadedUrls: string[] = [];
+    
+    // Upload files if any are selected
+    if (selectedFiles.length > 0) {
+      try {
+        const uploadData = new FormData();
+        selectedFiles.forEach((file) => uploadData.append('files', file));
+        
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: uploadData,
+        });
+        
+        const result = await res.json();
+        if (result.success && result.urls) {
+          // Convert relative URLs to absolute URLs so they can be clicked in WhatsApp
+          const baseUrl = window.location.origin;
+          uploadedUrls = result.urls.map((url: string) => baseUrl + url);
+        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        // Continue even if upload fails
+      }
+    }
+    
+    const message = `*Device Evaluation Request*
+*Action:* ${formData.actionType === 'swap' ? 'Swap Device' : 'Sell for Cash'}
+*Device Model:* ${formData.deviceModel}
+*Storage:* ${formData.storage}
+*Condition:* ${formData.condition}
+*Contact Number:* ${formData.phoneContact}
+${formData.actionType === 'swap' ? `*Desired Device:* ${formData.desiredDevice}\n` : ''}
+*Description/Faults:* ${formData.description || 'None'}
+${uploadedUrls.length > 0 ? `\n*Device Images:*\n${uploadedUrls.join('\n')}` : ''}`;
+
+    const whatsappUrl = `https://wa.me/233547654736?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    setIsSubmitting(false);
     setSubmitted(true);
   };
 
@@ -163,12 +218,52 @@ export default function SwapSellPage() {
                 />
               </div>
 
+              {/* Image Upload UI */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Device Images (Optional, Max 5)</label>
+                
+                <div className="flex flex-wrap gap-3 mb-3">
+                  {selectedFiles.map((file, idx) => (
+                    <div key={idx} className="relative w-20 h-20 bg-gray-100 rounded-lg border flex items-center justify-center overflow-hidden group">
+                      <img 
+                        src={URL.createObjectURL(file)} 
+                        alt="preview" 
+                        className="w-full h-full object-cover opacity-90"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => removeFile(idx)}
+                        className="absolute inset-0 m-auto w-6 h-6 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <XIcon size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  
+                  {selectedFiles.length < 5 && (
+                    <label className="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 hover:border-gray-400 transition-colors">
+                      <Upload size={20} className="text-gray-400 mb-1" />
+                      <span className="text-[10px] text-gray-500 font-semibold">Upload</span>
+                      <input 
+                        type="file" 
+                        multiple 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">Add clear pictures of the front, back, and any damages to get an accurate evaluation faster.</p>
+              </div>
+
               <button
                 type="submit"
-                className="w-full bg-red-600 text-white font-bold py-3.5 rounded-xl hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-red-600 text-white font-bold py-3.5 rounded-xl hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                <Send size={18} />
-                <span>Submit Evaluation Request</span>
+                {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                <span>{isSubmitting ? 'Uploading & Submitting...' : 'Submit Evaluation Request'}</span>
               </button>
 
             </form>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { X, Settings, MessageCircle, Music, Globe } from 'lucide-react';
+import { navLinks } from './Header';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -38,41 +39,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
           {/* Navigation Links */}
           <nav className="flex flex-col py-2">
-            <Link 
-              href="/" 
-              onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
-            >
-              Home
-            </Link>
-            <Link 
-              href="/#categories" 
-              onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
-            >
-              Categories
-            </Link>
-            <Link 
-              href="/#new" 
-              onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
-            >
-              New Arrivals
-            </Link>
-            <Link 
-              href="/swap-sell" 
-              onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
-            >
-              Swap / Sell
-            </Link>
-            <Link 
-              href="/track" 
-              onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
-            >
-              Track Order
-            </Link>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name}
+                href={link.href} 
+                onClick={onClose}
+                className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
             
             {/* Settings Link */}
             <Link 

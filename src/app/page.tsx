@@ -20,7 +20,7 @@ export default function Home() {
         <section className="mx-auto mt-8 flex max-w-7xl items-center justify-between px-4">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
-              {selectedCategory ? selectedCategory : 'Featured Products'}
+              {selectedCategory ? selectedCategory : 'Available Products'}
             </h2>
             <p className="text-sm text-gray-500">
               Explore authentic devices & original accessories

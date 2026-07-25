@@ -4,6 +4,7 @@ import { CartProvider } from '../context/CartContext';
 import Header from '@/components/store/Header';
 import Footer from '@/components/store/Footer';
 import CartDrawer from '@/components/store/CartDrawer';
+import LoadingBar from '@/components/store/LoadingBar';
 
 export const metadata: Metadata = {
   title: 'Joe Rich Phones & Accessories',
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <CartProvider>
+          <LoadingBar />
           <Header />
           {children}
           <Footer />

@@ -3,16 +3,17 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
     try {
-        const orderId = params.id;
+        const resolvedParams = await params;
+        const orderId = resolvedParams.id;
 
         if (!orderId) {
             return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
         }
 
-        const order = await prisma.order.findUnique({
+        const order = await (prisma as any).order.findUnique({
             where: { id: orderId },
             include: {
                 orderItems: {

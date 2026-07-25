@@ -46,12 +46,12 @@ export const IPHONE_COLORS: iPhoneColor[] = [
 ];
 
 export function getColorsForQuery(query: string): iPhoneColor[] {
-  const q = query.toLowerCase();
-  if (!q) return IPHONE_COLORS;
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
 
   const matched = IPHONE_COLORS.filter((color) =>
     color.models.some((m) => q.includes(m))
   );
 
-  return matched.length > 0 ? matched : IPHONE_COLORS;
+  return matched;
 }

@@ -39,6 +39,7 @@ model Product {
   lowStockThreshold Int         @default(5)
   condition         String      @default("NEW") // "NEW" or "USED"
   orderItems        OrderItem[]
+  reviews           Review[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
@@ -58,6 +59,7 @@ model Order {
   paymentMethod  String        @default("MOMO") // MOMO or COD
   paymentStatus  PaymentStatus @default(PENDING)
   orderItems     OrderItem[]
+  reviews        Review[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }
@@ -70,4 +72,21 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+}
+
+model Review {
+  id                 String   @id @default(cuid())
+  productId          String
+  product            Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderId            String
+  order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  customerName       String
+  rating             Int      @default(5)
+  comment            String   @db.Text
+  images             String[]
+  isVerifiedPurchase Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  @@index([productId])
+  @@index([orderId])
 }

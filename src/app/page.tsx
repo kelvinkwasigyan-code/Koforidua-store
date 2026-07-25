@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import CategoryBar from '@/components/CategoryBar';
 import ProductGrid from '@/components/store/ProductGrid';
 
@@ -27,16 +28,12 @@ export default function Home() {
             </p>
           </div>
 
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
-              selectedCategory === null
-                ? 'border-red-200 bg-red-50 text-red-600'
-                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-            }`}
+          <Link
+            href="/products"
+            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Display All
-          </button>
+          </Link>
         </section>
 
         {/* Database Product Grid */}

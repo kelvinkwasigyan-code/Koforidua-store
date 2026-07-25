@@ -369,7 +369,7 @@ export default function AdminProductsPage() {
                       })}
                     </div>
                   </div>
-                  {condition === 'NEW' && (
+                  {categoryName === 'Smartphones' && condition === 'NEW' && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
                       <div className="flex justify-between items-center">
                         <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
@@ -380,42 +380,48 @@ export default function AdminProductsPage() {
                         </span>
                       </div>
 
-                      <p className="text-[11px] text-gray-500">
-                        {name.trim() 
-                          ? `Suggested colors matching "${name}":` 
-                          : 'Select available colors for this device:'}
-                      </p>
+                      {getColorsForQuery(name).length === 0 ? (
+                        <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                          💡 Type an iPhone model in Product Name (e.g. <em>iPhone 15 Pro</em>, <em>iPhone 13</em>) to reveal official colors.
+                        </p>
+                      ) : (
+                        <>
+                          <p className="text-[11px] text-gray-500">
+                            Colors matching <strong>"{name}"</strong>:
+                          </p>
 
-                      <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pt-1">
-                        {getColorsForQuery(name).map((c) => {
-                          const isSelected = selectedColors.some((sc) => sc.name === c.name);
-                          return (
-                            <button
-                              type="button"
-                              key={c.name}
-                              onClick={() => {
-                                if (isSelected) {
-                                  setSelectedColors(selectedColors.filter((sc) => sc.name !== c.name));
-                                } else {
-                                  setSelectedColors([...selectedColors, c]);
-                                }
-                              }}
-                              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                                isSelected
-                                  ? 'bg-red-50 dark:bg-red-950/40 border-red-500 text-red-700 dark:text-red-300 shadow-xs ring-1 ring-red-500'
-                                  : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
-                              }`}
-                            >
-                              <span
-                                className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0 shadow-2xs"
-                                style={{ backgroundColor: c.hex }}
-                              />
-                              <span>{c.name}</span>
-                              {isSelected && <Check size={12} className="text-red-600" />}
-                            </button>
-                          );
-                        })}
-                      </div>
+                          <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pt-1">
+                            {getColorsForQuery(name).map((c) => {
+                              const isSelected = selectedColors.some((sc) => sc.name === c.name);
+                              return (
+                                <button
+                                  type="button"
+                                  key={c.name}
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      setSelectedColors(selectedColors.filter((sc) => sc.name !== c.name));
+                                    } else {
+                                      setSelectedColors([...selectedColors, c]);
+                                    }
+                                  }}
+                                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                                    isSelected
+                                      ? 'bg-red-50 dark:bg-red-950/40 border-red-500 text-red-700 dark:text-red-300 shadow-xs ring-1 ring-red-500'
+                                      : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
+                                  }`}
+                                >
+                                  <span
+                                    className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0 shadow-2xs"
+                                    style={{ backgroundColor: c.hex }}
+                                  />
+                                  <span>{c.name}</span>
+                                  {isSelected && <Check size={12} className="text-red-600" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
 

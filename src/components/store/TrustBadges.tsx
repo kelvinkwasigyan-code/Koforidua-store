@@ -1,59 +1,28 @@
-'use client';
-
-import React from 'react';
+import { ShieldCheck, Truck, Clock, Headphones } from 'lucide-react';
 
 export default function TrustBadges() {
-    return (
-        <section className="py-16 px-4 max-w-7xl mx-auto">
-            {/* Main Glass Card */}
-            <div className="backdrop-blur-2xl bg-white/40 border border-white/80 rounded-3xl p-8 sm:p-12 shadow-[0_8px_32px_rgba(0,0,0,0.04)] relative overflow-hidden">
+  const badges = [
+    { icon: <Truck className="text-red-600" size={24} />, title: 'Nationwide Delivery', desc: 'Fast delivery across Ghana' },
+    { icon: <ShieldCheck className="text-red-600" size={24} />, title: '100% Authentic', desc: 'Original devices & accessories' },
+    { icon: <Clock className="text-red-600" size={24} />, title: 'Warranty Protected', desc: 'Guaranteed quality assurance' },
+    { icon: <Headphones className="text-red-600" size={24} />, title: '24/7 Support', desc: 'Call or WhatsApp: 0547654736' },
+  ];
 
-                {/* Soft Red Ambient Glow */}
-                <div className="absolute -top-24 -right-24 w-72 h-72 bg-red-400/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-red-300/20 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative z-10 max-w-3xl mx-auto text-center space-y-6">
-
-                    {/* Badge */}
-                    <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-600 border border-red-200/50 backdrop-blur-md">
-                        About Us
-                    </span>
-
-                    {/* Heading */}
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Joe Rich Phones & Accessories
-                    </h2>
-
-                    {/* Description */}
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                        Your trusted destination for genuine smartphones, tablets, smart wearables, and premium mobile accessories in Ghana. We bring you top-tier tech at competitive prices with fast, reliable delivery and seamless payment options.
-                    </p>
-
-                    {/* Feature Badges Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-
-                        <div className="backdrop-blur-md bg-white/60 border border-white/90 rounded-2xl p-4 shadow-sm text-center">
-                            <div className="text-2xl mb-1">📱</div>
-                            <h3 className="font-bold text-gray-800 text-sm">100% Authentic</h3>
-                            <p className="text-xs text-gray-500 mt-0.5">Original brand devices</p>
-                        </div>
-
-                        <div className="backdrop-blur-md bg-white/60 border border-white/90 rounded-2xl p-4 shadow-sm text-center">
-                            <div className="text-2xl mb-1">🚚</div>
-                            <h3 className="font-bold text-gray-800 text-sm">Ghana-Wide Delivery</h3>
-                            <p className="text-xs text-gray-500 mt-0.5">Fast & secure shipping</p>
-                        </div>
-
-                        <div className="backdrop-blur-md bg-white/60 border border-white/90 rounded-2xl p-4 shadow-sm text-center">
-                            <div className="text-2xl mb-1">💳</div>
-                            <h3 className="font-bold text-gray-800 text-sm">MoMo & Cards</h3>
-                            <p className="text-xs text-gray-500 mt-0.5">Easy mobile payments</p>
-                        </div>
-
-                    </div>
-
-                </div>
+  return (
+    <section className="bg-white border-y my-6 py-6 shadow-xs">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
+        {badges.map((b, i) => (
+          <div key={i} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+            <div className="p-3 bg-red-50 rounded-xl flex items-center justify-center shrink-0">
+              {b.icon}
             </div>
-        </section>
-    );
+            <div>
+              <h4 className="font-semibold text-gray-900 text-sm">{b.title}</h4>
+              <p className="text-xs text-gray-500">{b.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }

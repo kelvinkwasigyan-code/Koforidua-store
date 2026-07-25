@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useCart } from '@/store/CartContext';
+import { useCart } from '@/context/CartContext';
 
 const CartDrawer = () => {
     const { cart, isOpen, closeCart, removeFromCart, updateQuantity, subtotal } = useCart();
@@ -43,7 +43,7 @@ const CartDrawer = () => {
                                 return (
                                     <div key={item.id} className="flex items-center space-x-4 border-b pb-4">
                                         <img
-                                            src={item.imageUrl}
+                                            src={item.image}
                                             alt={item.name}
                                             className="w-16 h-16 object-contain bg-gray-50 rounded border p-1"
                                         />
@@ -52,7 +52,7 @@ const CartDrawer = () => {
                                                 {item.name}
                                             </h4>
                                             <p className="text-xs text-indigo-600 font-bold mt-0.5">
-                                                GH₵{effectivePrice.toLocaleString()}
+                                                GH₵{Number(effectivePrice).toLocaleString()}
                                             </p>
 
                                             {/* Quantity Controls */}
@@ -92,7 +92,7 @@ const CartDrawer = () => {
                         <div className="p-4 sm:p-6 border-t border-gray-200 bg-gray-50 space-y-4">
                             <div className="flex justify-between text-base font-bold text-gray-900">
                                 <span>Subtotal</span>
-                                <span>GH₵{subtotal.toLocaleString()}</span>
+                                <span>GH₵{Number(subtotal).toLocaleString()}</span>
                             </div>
                             <p className="text-xs text-gray-500">Shipping and taxes calculated at checkout.</p>
                             <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-sm transition">

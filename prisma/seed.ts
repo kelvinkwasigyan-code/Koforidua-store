@@ -1,50 +1,94 @@
-import "dotenv/config";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../src/generated/prisma/client";
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const connectionString = process.env.DATABASE_URL!;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const categories = [
-    { name: "Phones", slug: "phones" },
-    { name: "Electronics", slug: "electronics" },
-    { name: "Accessories", slug: "accessories" },
-    { name: "Sprays & Liquids", slug: "sprays-liquids" },
-  ];
+  console.log('🌱 Updating products with local public images...');
 
-  for (const category of categories) {
-    await prisma.category.upsert({
-      where: { slug: category.slug },
-      update: {},
-      create: category,
-    });
+  // 1. Fetch category IDs
+  const watchesCategory = await prisma.category.findFirst({ where: { name: 'Smart Watches' } }) 
+    || await prisma.category.findFirst({ where: { name: 'Watches' } });
+  const accessoriesCategory = await prisma.category.findFirst({ where: { name: 'Chargers' } }) 
+    || await prisma.category.findFirst({ where: { name: 'Phone Accessories' } });
+  const fragrancesCategory = await prisma.category.findFirst({ where: { name: 'Fragrance & Scalp Care' } }) 
+    || await prisma.category.findFirst({ where: { name: 'Fragrances & Air Fresheners' } });
+
+  if (!watchesCategory || !accessoriesCategory || !fragrancesCategory) {
+    throw new Error('Categories not found! Make sure category seeding was run.');
   }
 
-  const deliveryZones = [
-    { region: "Eastern", city: "Koforidua", baseFee: 15, estimatedDays: 1 },
-    { region: "Greater Accra", city: "Accra", baseFee: 25, estimatedDays: 2 },
-    { region: "Ashanti", city: "Kumasi", baseFee: 30, estimatedDays: 2 },
-    { region: "Northern", city: "Tamale", baseFee: 50, estimatedDays: 4 },
-    { region: "Western", city: "Takoradi", baseFee: 35, estimatedDays: 3 },
+  // 2. Define products mapped directly to your /public filenames
+  const productsData = [
+    {
+      name: 'Designer Fragrance Spray',
+      description: 'Long-lasting luxury scent with woody and amber notes.',
+      price: 280.00,
+      stockQuantity: 15,
+      images: ['/fragrance.PNG'],
+      categoryId: fragrancesCategory.id,
+    },
+    {
+      name: 'Wireless Fast Charger',
+      description: '15W high-speed Qi-certified wireless charging pad for modern devices.',
+      price: 120.00,
+      stockQuantity: 25,
+      images: ['/airpods.PNG'],
+      categoryId: accessoriesCategory.id,
+    },
+    {
+      name: 'Luxury Steel Smartwatch',
+      description: 'High-end stainless steel body with advanced fitness tracking.',
+      price: 650.00,
+      stockQuantity: 5,
+      images: ['/speaker.PNG'],
+      categoryId: watchesCategory.id,
+    },
+    {
+      name: 'Classic Chronograph Watch',
+      description: 'A sleek, premium watch with minimalist dial design.',
+      price: 350.00,
+      stockQuantity: 10,
+      images: ['/iphones.PNG'],
+      categoryId: watchesCategory.id,
+    }
   ];
 
-  for (const zone of deliveryZones) {
-    await prisma.deliveryZone.upsert({
-      where: {
-        region_city: { region: zone.region, city: zone.city },
+  for (const item of productsData) {
+    const slug = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    await prisma.product.upsert({
+      where: { slug },
+      update: {
+        images: item.images,
+        price: item.price,
+        stockQuantity: item.stockQuantity,
       },
-      update: { baseFee: zone.baseFee, estimatedDays: zone.estimatedDays },
-      create: zone,
+      create: {
+        name: item.name,
+        slug,
+        description: item.description,
+        price: item.price,
+        stockQuantity: item.stockQuantity,
+        images: item.images,
+        category: {
+          connect: { id: item.categoryId },
+        },
+      },
     });
   }
 
-  console.log("Seed completed.");
+  console.log('✅ Products successfully updated with local public images!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seed Error:', e);
     process.exit(1);
   })
   .finally(async () => {

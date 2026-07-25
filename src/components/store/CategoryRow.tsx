@@ -14,20 +14,20 @@ const categories = [
 
 export default function CategoryRow() {
     return (
-        <section className="py-8 px-4 max-w-7xl mx-auto">
-            <div className="flex items-center justify-start sm:justify-center gap-6 overflow-x-auto pb-4 scrollbar-none">
+        <section className="py-8">
+            <div className="flex items-center gap-4 overflow-x-auto px-4 pb-2 scrollbar-none snap-x snap-mandatory">
                 {categories.map((cat, index) => (
                     <Link
                         key={index}
                         href={cat.href}
-                        className="flex flex-col items-center min-w-[84px] group cursor-pointer"
+                        className="snap-center shrink-0 flex flex-col items-center min-w-[84px] group cursor-pointer"
                     >
                         {/* Glass Bubble Container */}
-                        <div className="relative w-16 h-16 rounded-full backdrop-blur-xl bg-white/60 dark:bg-gray-800/60 border border-white/80 dark:border-white/10 shadow-sm flex items-center justify-center p-2.5 group-hover:scale-110 group-hover:bg-red-500/10 transition-all duration-300">
+                        <div className="w-16 h-16 rounded-full bg-white border border-gray-200 p-2 flex items-center justify-center overflow-hidden shadow-sm group-hover:border-red-500 transition-colors">
                             <img
                                 src={cat.image}
                                 alt={cat.name}
-                                className="w-full h-full object-contain filter drop-shadow-sm"
+                                className="w-full h-full object-contain"
                             />
                         </div>
 

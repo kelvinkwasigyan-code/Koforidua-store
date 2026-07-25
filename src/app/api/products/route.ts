@@ -5,8 +5,16 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const condition = searchParams.get('condition');
+        const ids = searchParams.get('ids');
         
-        const whereClause = condition ? { condition } : {};
+        let whereClause: any = {};
+        if (condition) whereClause.condition = condition;
+        if (ids) {
+            const idsArray = ids.split(',').filter(Boolean);
+            if (idsArray.length > 0) {
+                whereClause.id = { in: idsArray };
+            }
+        }
 
         const products = await prisma.product.findMany({
             where: whereClause,

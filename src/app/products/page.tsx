@@ -54,16 +54,22 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  // Compute unique categories and conditions from fetched data
+  // Category choices including explicit iPhones, Android, Tablets, Chargers, Speakers, and AirPods
   const availableCategories = useMemo(() => {
-    const cats = new Set(products.map(p => p.category?.name).filter(Boolean));
-    return Array.from(cats);
+    const defaultCats = ['iPhones', 'Android', 'Tablets', 'Chargers', 'Speakers', 'AirPods', 'Smartphones', 'Watches'];
+    const dbCats = products.map(p => p.category?.name).filter(Boolean);
+    const combined = new Set([...defaultCats, ...dbCats]);
+    return Array.from(combined).filter(c => {
+      const lc = c.toLowerCase();
+      return lc !== 'laptops' && lc !== 'laptop' && !lc.includes('accessor');
+    });
   }, [products]);
 
-  const availableConditions = useMemo(() => {
-    const conds = new Set(products.map(p => p.condition).filter(Boolean));
-    return Array.from(conds);
-  }, [products]);
+  // Condition options
+  const availableConditions = [
+    { label: 'Brand New', value: 'NEW' },
+    { label: 'Home Used', value: 'USED' },
+  ];
 
   // Filter and sort logic
   const filteredProducts = useMemo(() => {
@@ -71,7 +77,35 @@ export default function ProductsPage() {
 
     // Category Filter
     if (selectedCategories.length > 0) {
-      result = result.filter(p => selectedCategories.includes(p.category?.name));
+      result = result.filter((p) => {
+        const catName = (p.category?.name || '').toLowerCase();
+        const prodName = (p.name || '').toLowerCase();
+
+        return selectedCategories.some((selectedCat) => {
+          const sc = selectedCat.toLowerCase();
+          if (sc === 'iphones') {
+            return prodName.includes('iphone') || catName.includes('iphone');
+          }
+          if (sc === 'android') {
+            return (
+              (catName.includes('smartphone') || catName.includes('phone')) && !prodName.includes('iphone')
+            ) || prodName.includes('samsung') || prodName.includes('android') || prodName.includes('pixel');
+          }
+          if (sc === 'tablets') {
+            return catName.includes('tablet') || prodName.includes('ipad') || prodName.includes('tab');
+          }
+          if (sc === 'chargers') {
+            return prodName.includes('charger') || prodName.includes('adapter') || prodName.includes('cable') || catName.includes('charger');
+          }
+          if (sc === 'speakers') {
+            return prodName.includes('speaker') || prodName.includes('jbl') || catName.includes('speaker');
+          }
+          if (sc === 'airpods') {
+            return prodName.includes('airpod') || prodName.includes('earbud') || prodName.includes('headphone') || catName.includes('airpod');
+          }
+          return catName === sc;
+        });
+      });
     }
 
     // Condition Filter
@@ -143,7 +177,11 @@ export default function ProductsPage() {
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Category</h3>
           <div className="space-y-2">
             {availableCategories.map(cat => (
-              <label key={cat} className="flex items-center gap-3 cursor-pointer group">
+              <label 
+                key={cat} 
+                onClick={() => toggleCategory(cat)}
+                className="flex items-center gap-3 cursor-pointer group select-none"
+              >
                 <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
                   selectedCategories.includes(cat) 
                     ? 'bg-red-600 border-red-600 text-white' 
@@ -161,25 +199,27 @@ export default function ProductsPage() {
       <hr className="border-gray-200" />
 
       {/* Conditions */}
-      {availableConditions.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Condition</h3>
-          <div className="space-y-2">
-            {availableConditions.map(cond => (
-              <label key={cond} className="flex items-center gap-3 cursor-pointer group">
-                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                  selectedConditions.includes(cond) 
-                    ? 'bg-red-600 border-red-600 text-white' 
-                    : 'bg-white border-gray-300 group-hover:border-red-400'
-                }`}>
-                  {selectedConditions.includes(cond) && <Check size={14} strokeWidth={3} />}
-                </div>
-                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{cond === 'NEW' ? 'Brand New' : 'Home Used'}</span>
-              </label>
-            ))}
-          </div>
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Condition</h3>
+        <div className="space-y-2">
+          {availableConditions.map(cond => (
+            <label 
+              key={cond.value} 
+              onClick={() => toggleCondition(cond.value)}
+              className="flex items-center gap-3 cursor-pointer group select-none"
+            >
+              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                selectedConditions.includes(cond.value) 
+                  ? 'bg-red-600 border-red-600 text-white' 
+                  : 'bg-white border-gray-300 group-hover:border-red-400'
+              }`}>
+                {selectedConditions.includes(cond.value) && <Check size={14} strokeWidth={3} />}
+              </div>
+              <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{cond.label}</span>
+            </label>
+          ))}
         </div>
-      )}
+      </div>
 
       <hr className="border-gray-200" />
 

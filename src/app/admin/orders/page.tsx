@@ -129,17 +129,17 @@ export default function AdminOrdersPage() {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
-                    <td className="py-4 px-6 font-mono text-xs font-bold text-gray-900 dark:text-white">
+                    <td className="py-4 px-6 font-mono text-xs font-normal text-gray-600 dark:text-gray-400">
                       {order.id.substring(0, 10)}...
                     </td>
                     <td className="py-4 px-6">
                       <div className="font-bold text-gray-900 dark:text-white">{order.customerName}</div>
-                      <div className="text-xs text-gray-500">{order.customerPhone}</div>
+                      <div className="text-xs text-gray-500 font-normal">{order.customerPhone}</div>
                     </td>
-                    <td className="py-4 px-6 font-medium text-xs text-gray-500">
+                    <td className="py-4 px-6 font-bold text-xs text-gray-900 dark:text-white">
                       {order.city}, {order.region}
                     </td>
-                    <td className="py-4 px-6 font-black text-gray-900 dark:text-white">
+                    <td className="py-4 px-6 font-normal text-gray-700 dark:text-gray-300">
                       GH₵ {Number(order.totalAmount).toLocaleString()}
                     </td>
                     <td className="py-4 px-6">
@@ -200,14 +200,13 @@ export default function AdminOrdersPage() {
             {/* Customer Details Grid */}
             <div className="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl text-xs">
               <div>
-                <p className="text-gray-400 font-bold uppercase mb-1">Customer</p>
+                <p className="text-gray-400 font-normal uppercase mb-1">Customer</p>
                 <p className="font-bold text-gray-900 dark:text-white">{selectedOrder.customerName}</p>
-                <p className="text-gray-500">{selectedOrder.customerPhone}</p>
+                <p className="text-gray-500 font-normal">{selectedOrder.customerPhone}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-bold uppercase mb-1">Address</p>
-                <p className="font-bold text-gray-900 dark:text-white">{selectedOrder.address || selectedOrder.city}</p>
-                <p className="text-gray-500">{selectedOrder.region}</p>
+                <p className="text-gray-400 font-normal uppercase mb-1">Location</p>
+                <p className="font-bold text-gray-900 dark:text-white">{selectedOrder.address || selectedOrder.city}, {selectedOrder.region}</p>
               </div>
             </div>
 

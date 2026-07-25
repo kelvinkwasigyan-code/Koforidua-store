@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import CategoryBar from '@/components/CategoryBar';
 import ProductGrid from '@/components/store/ProductGrid';
+import RecentlyViewedSection from '@/components/store/RecentlyViewedSection';
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -16,6 +17,20 @@ export default function Home() {
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
+
+        {/* Promo Video Banner */}
+        <div className="w-full max-w-4xl mx-auto my-6 px-4">
+          <div className="rounded-3xl overflow-hidden shadow-xl border border-gray-200/60 bg-black">
+            <video 
+              src="/Promo-video.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="w-full h-auto object-cover max-h-[450px]"
+            />
+          </div>
+        </div>
 
         {/* Section Title & Display All Controls */}
         <section className="mx-auto mt-8 flex max-w-7xl items-center justify-between px-4">
@@ -38,6 +53,9 @@ export default function Home() {
 
         {/* Database Product Grid */}
         <ProductGrid selectedCategory={selectedCategory} />
+
+        {/* Recently Viewed Section */}
+        <RecentlyViewedSection />
       </div>
     </main>
   );

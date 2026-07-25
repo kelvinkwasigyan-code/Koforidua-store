@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
+import { useRecordView } from '@/hooks/useRecordView';
 import { ShoppingBag, CheckCircle2, ShieldCheck, Truck, Minus, Plus, Star, MessageSquare, BadgeCheck, X, AlertCircle } from 'lucide-react';
 
 interface ProductDetailsClientProps {
@@ -30,6 +31,7 @@ interface Review {
 }
 
 export default function ProductDetailsClient({ product }: ProductDetailsClientProps) {
+  useRecordView(product.id);
   const { addToCart, openCart } = useCart();
   const [activeImage, setActiveImage] = useState(product.images[0] || '/file.svg');
   const [quantity, setQuantity] = useState(1);

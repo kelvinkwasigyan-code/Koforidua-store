@@ -15,13 +15,13 @@ export const navLinks = [
 ];
 
 export default function Header() {
-  const { cart } = useCart();
+  const { cart, openCart } = useCart();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+      <header className="sticky top-0 z-40 bg-white/60 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
         {/* Top Announcement Bar */}
         <div className="bg-red-600/90 backdrop-blur-md text-white text-xs py-1.5 px-4 font-medium flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ export default function Header() {
               <svg className="w-4 h-4 fill-green-400 drop-shadow-sm" viewBox="0 0 576 512">
                 <path d="M420.55,301.93a24,24,0,1,1,24-24,24,24,0,0,1-24,24m-265.1,0a24,24,0,1,1,24-24,24,24,0,0,1-24,24m273.7-144.48,47.94-83a10,10,0,1,0-17.27-10h0l-48.54,84.07a301.25,301.25,0,0,0-246.56,0L116.18,64.45a10,10,0,1,0-17.27,10h0l48,83.24C64.06,204.62,9.39,285,1.5,373.11h573c-7.9-88.13-62.57-168.49-145.35-215.66" />
               </svg>
-              <span className="font-medium tracking-wide text-white/95">Premium Apple/Android Devices & Original Accessories</span>
+              <span className="font-medium tracking-wide text-white/95">Premium Devices & Accessories</span>
             </div>
           </div>
 
@@ -106,8 +106,8 @@ export default function Header() {
               <User size={20} />
             </Link>
 
-            <Link 
-              href="/cart" 
+            <button 
+              onClick={openCart}
               className="relative p-2 text-gray-700 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100 flex items-center"
               title="View Cart"
             >
@@ -117,7 +117,7 @@ export default function Header() {
                   {totalItems}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
         </div>
 

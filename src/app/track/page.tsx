@@ -80,8 +80,6 @@ export default function TrackOrderPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-between">
-            <Header />
-
             <main className="flex-1 w-full max-w-3xl mx-auto px-4 py-12">
                 <div className="text-center mb-10">
                     <h1 className="text-3xl font-black text-gray-900 mb-3">Track Your Order</h1>
@@ -164,9 +162,9 @@ export default function TrackOrderPage() {
 
                         <div className="p-6 border-t border-gray-100 bg-gray-50 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Delivery Details</p>
-                                <p className="text-sm font-medium text-gray-900">{order.customerName}</p>
-                                <p className="text-sm text-gray-500">{order.address || order.city}, {order.region}</p>
+                                <p className="text-xs font-normal text-gray-400 uppercase tracking-wider mb-1">Delivery Details</p>
+                                <p className="text-sm font-bold text-gray-900">{order.customerName}</p>
+                                <p className="text-sm font-bold text-gray-900">{order.address || order.city}, {order.region}</p>
                             </div>
                             <div>
                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date Ordered</p>
@@ -183,8 +181,6 @@ export default function TrackOrderPage() {
                     </div>
                 )}
             </main>
-
-            <Footer />
         </div>
     );
 }

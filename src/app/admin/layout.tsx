@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 flex flex-col md:flex-row">
 
             {/* Mobile Top Navigation Header */}
-            <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+            <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
                 <span className="font-extrabold text-lg text-red-600 dark:text-red-500">
                     Admin Portal
                 </span>

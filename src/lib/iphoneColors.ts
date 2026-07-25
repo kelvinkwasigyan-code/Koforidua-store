@@ -47,11 +47,27 @@ export const IPHONE_COLORS: iPhoneColor[] = [
 
 export function getColorsForQuery(query: string): iPhoneColor[] {
   const q = query.toLowerCase().trim();
-  if (!q) return [];
+  if (!q) return IPHONE_COLORS;
+
+  // Extract model number (e.g. 11, 12, 13, 14, 15, 16, 17)
+  const numberMatch = q.match(/1[1-7]/);
+  const modelNum = numberMatch ? numberMatch[0] : null;
+
+  // If typing "iPhone" without a model number yet, show all official colors
+  if (!modelNum) {
+    return IPHONE_COLORS;
+  }
+
+  const isPro = q.includes('pro');
 
   const matched = IPHONE_COLORS.filter((color) =>
-    color.models.some((m) => q.includes(m))
+    color.models.some((m) => {
+      if (isPro) {
+        return m.includes(`${modelNum} pro`);
+      }
+      return m === modelNum;
+    })
   );
 
-  return matched;
+  return matched.length > 0 ? matched : IPHONE_COLORS;
 }

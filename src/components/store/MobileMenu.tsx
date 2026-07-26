@@ -15,26 +15,31 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Backdrop overlay */}
-      <div 
-        className="fixed inset-0 bg-black/50 transition-opacity" 
+      <div
+        className="fixed inset-0 bg-black/50 transition-opacity"
         onClick={onClose}
       />
 
       {/* Sliding Drawer Panel */}
       <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl z-10 flex flex-col justify-between overflow-y-auto">
-        
+
         {/* Top Header & Close Button */}
         <div>
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="font-[family-name:var(--font-outfit)] text-xl flex items-center gap-1.5">
+            <div className="font-[family-name:var(--font-outfit)] text-xl flex items-center gap-1.5">
               <span className="font-black tracking-tighter bg-gradient-to-r from-gray-950 via-red-600 to-red-500 bg-clip-text text-transparent">
                 Joerich
               </span>
-              <span className="font-bold tracking-[0.18em] text-red-600 text-xs uppercase bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200/80">
-                PHONES
-              </span>
-            </span>
-            <button 
+              <div className="flex flex-col items-center justify-center leading-none">
+                <span className="font-bold tracking-[0.18em] text-red-600 text-xs uppercase bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200/80">
+                  PHONES
+                </span>
+                <span className="text-[8px] font-extrabold tracking-wider text-gray-500 dark:text-gray-400 mt-0.5 uppercase whitespace-nowrap">
+                  & Accessories
+                </span>
+              </div>
+            </div>
+            <button
               onClick={onClose}
               className="p-2 text-gray-500 hover:text-black rounded-full hover:bg-gray-100 transition-colors"
             >
@@ -45,9 +50,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Navigation Links */}
           <nav className="flex flex-col py-2">
             {navLinks.map((link) => (
-              <Link 
+              <Link
                 key={link.name}
-                href={link.href} 
+                href={link.href}
                 onClick={onClose}
                 className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors"
               >
@@ -55,8 +60,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Link>
             ))}
 
-            <Link 
-              href="/wishlist" 
+            <Link
+              href="/wishlist"
               onClick={onClose}
               className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors flex items-center gap-2"
             >
@@ -66,24 +71,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </nav>
         </div>
 
-        {/* Bottom Section: Auth & Social Media Icons */}
+        {/* Bottom Section: Social Media Icons */}
         <div className="p-6 bg-gray-50 border-t">
-          <div className="flex flex-col gap-2.5 mb-6">
-            <Link 
-              href="/login" 
-              onClick={onClose}
-              className="w-full bg-gray-900 text-white text-center py-2.5 rounded-full font-medium hover:bg-black transition-colors text-sm"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/register" 
-              onClick={onClose}
-              className="w-full border border-gray-300 text-gray-800 text-center py-2.5 rounded-full font-medium hover:bg-gray-100 transition-colors text-sm"
-            >
-              Create Account
-            </Link>
-          </div>
 
           {/* Social Media Links Row */}
           <div className="flex items-center justify-around text-gray-600 pt-2 border-t border-gray-200">

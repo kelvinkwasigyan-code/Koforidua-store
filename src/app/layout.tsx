@@ -29,8 +29,11 @@ export const metadata: Metadata = {
     title: 'Joerich Store',
   },
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
+    icon: [
+      { url: '/favicon (1).ico', type: 'image/x-icon' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+    shortcut: '/favicon (1).ico',
     apple: '/logo.jpg',
   },
 };

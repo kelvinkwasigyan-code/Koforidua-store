@@ -358,76 +358,75 @@ export default function AdminProductsPage() {
         })()}
       </div>
 
-      {/* Product Table Card */}
-      <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
+      {/* Product Inventory Display */}
+      <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-gray-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="py-12 text-center text-sm text-gray-500">Loading products...</div>
+          <div className="py-12 text-center text-sm font-semibold text-gray-500">Loading inventory...</div>
         ) : products.filter(p => 
             (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
             (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
           ).length === 0 ? (
-          <div className="py-12 text-center text-sm text-gray-400">No products found in {selectedCategoryTab !== 'ALL' ? selectedCategoryTab : 'this view'}.</div>
+          <div className="py-12 text-center text-sm font-semibold text-gray-400">No products found in {selectedCategoryTab !== 'ALL' ? selectedCategoryTab : 'this view'}.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-              <thead className="bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 text-xs uppercase font-extrabold text-gray-500 dark:text-gray-400">
-                <tr>
-                  <th className="py-4 px-6">Product</th>
-                  <th className="py-4 px-6">Category</th>
-                  <th className="py-4 px-6">Condition</th>
-                  <th className="py-4 px-6">Price</th>
-                  <th className="py-4 px-6">Stock</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {products
-                  .filter((p) => 
-                    !p.images?.some((img: string) => SHOWCASE_IMAGES.includes(img)) &&
-                    (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
-                    (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
-                  )
-                  .map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
-                    <td className="py-4 px-6 flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                        {product.images && product.images[0] ? (
-                          <Image src={product.images[0]} alt={product.name} width={40} height={40} className="object-contain" />
-                        ) : (
-                          <ImageIcon className="text-gray-400 w-5 h-5" />
-                        )}
+          <div>
+            {/* Mobile View Inventory Cards (md:hidden) */}
+            <div className="md:hidden divide-y divide-gray-200/80 dark:divide-slate-800">
+              {products
+                .filter((p) => 
+                  !p.images?.some((img: string) => SHOWCASE_IMAGES.includes(img)) &&
+                  (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
+                  (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
+                )
+                .map((product) => (
+                  <div key={product.id} className="p-4 space-y-3 bg-white/40 dark:bg-slate-900/40">
+                    {/* Top Row: Product Info & Price */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-slate-800 p-1 flex-shrink-0 flex items-center justify-center relative overflow-hidden border border-gray-200/60 dark:border-slate-700/60">
+                          {product.images && product.images[0] ? (
+                            <Image src={product.images[0]} alt={product.name} width={48} height={48} className="object-contain" />
+                          ) : (
+                            <ImageIcon className="text-gray-400 w-6 h-6" />
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="font-extrabold text-sm text-gray-900 dark:text-white line-clamp-1">
+                            {product.name}
+                          </h3>
+                          <span className="inline-block text-[10px] font-black uppercase tracking-wider text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/50">
+                            {product.category?.name || 'Uncategorized'}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-semibold text-gray-900 dark:text-white line-clamp-1">
-                        {product.name}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 font-medium text-gray-500 dark:text-gray-400">
-                      {product.category?.name || 'Uncategorized'}
-                    </td>
-                    <td className="py-4 px-6">
+
+                      <div className="text-right shrink-0">
+                        <span className="text-sm font-black text-gray-900 dark:text-white">
+                          GH₵ {Number(product.price).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Middle Interactive Status Toggles */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                       <button
                         onClick={() => handleToggleCondition(product)}
                         title="Click to toggle Brand New / Home Used"
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition active:scale-95 border ${
                           product.condition === 'USED' 
-                            ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800' 
-                            : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                            ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800' 
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800'
                         }`}
                       >
                         <span>{product.condition === 'USED' ? 'Home Used' : 'Brand New'}</span>
                       </button>
-                    </td>
-                    <td className="py-4 px-6 font-bold text-gray-900 dark:text-white">
-                      GH₵ {Number(product.price).toLocaleString()}
-                    </td>
-                    <td className="py-4 px-6">
+
                       <button
                         onClick={() => handleToggleAvailability(product)}
                         title="Click to toggle In Stock / Out of Stock"
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition active:scale-95 border ${
                           product.stockQuantity > 0
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
-                            : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800'
+                            : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800'
                         }`}
                       >
                         <span className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
@@ -437,25 +436,117 @@ export default function AdminProductsPage() {
                             : 'Out of Stock'}
                         </span>
                       </button>
-                    </td>
-                    <td className="py-4 px-6 text-right space-x-2">
+                    </div>
+
+                    {/* Bottom Row Actions */}
+                    <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-slate-800/80">
                       <button
                         onClick={() => openEditModal(product)}
-                        className="px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-xl transition inline-flex items-center gap-1"
+                        className="flex-1 py-2 px-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-xs rounded-xl border border-blue-200/60 dark:border-blue-900/50 flex items-center justify-center gap-1.5 active:scale-95 transition"
                       >
-                        <Edit2 size={14} /> Edit
+                        <Edit2 size={14} /> Edit Item
                       </button>
                       <button
                         onClick={() => handleDelete(product.id)}
-                        className="px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl transition inline-flex items-center gap-1"
+                        className="flex-1 py-2 px-3 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-extrabold text-xs rounded-xl border border-red-200/60 dark:border-red-900/50 flex items-center justify-center gap-1.5 active:scale-95 transition"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+            </div>
+
+            {/* Desktop View Table (hidden md:block) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                <thead className="bg-gray-100/50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 text-xs uppercase font-extrabold text-gray-500 dark:text-gray-400">
+                  <tr>
+                    <th className="py-4 px-6">Product</th>
+                    <th className="py-4 px-6">Category</th>
+                    <th className="py-4 px-6">Condition</th>
+                    <th className="py-4 px-6">Price</th>
+                    <th className="py-4 px-6">Stock</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                  {products
+                    .filter((p) => 
+                      !p.images?.some((img: string) => SHOWCASE_IMAGES.includes(img)) &&
+                      (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
+                      (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
+                    )
+                    .map((product) => (
+                    <tr key={product.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
+                      <td className="py-4 px-6 flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                          {product.images && product.images[0] ? (
+                            <Image src={product.images[0]} alt={product.name} width={40} height={40} className="object-contain" />
+                          ) : (
+                            <ImageIcon className="text-gray-400 w-5 h-5" />
+                          )}
+                        </div>
+                        <span className="font-semibold text-gray-900 dark:text-white line-clamp-1">
+                          {product.name}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 font-medium text-gray-500 dark:text-gray-400">
+                        {product.category?.name || 'Uncategorized'}
+                      </td>
+                      <td className="py-4 px-6">
+                        <button
+                          onClick={() => handleToggleCondition(product)}
+                          title="Click to toggle Brand New / Home Used"
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                            product.condition === 'USED' 
+                              ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800' 
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                          }`}
+                        >
+                          <span>{product.condition === 'USED' ? 'Home Used' : 'Brand New'}</span>
+                        </button>
+                      </td>
+                      <td className="py-4 px-6 font-bold text-gray-900 dark:text-white">
+                        GH₵ {Number(product.price).toLocaleString()}
+                      </td>
+                      <td className="py-4 px-6">
+                        <button
+                          onClick={() => handleToggleAvailability(product)}
+                          title="Click to toggle In Stock / Out of Stock"
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                            product.stockQuantity > 0
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                              : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800'
+                          }`}
+                        >
+                          <span className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                          <span>
+                            {product.stockQuantity > 0 
+                              ? (product.category?.name === 'Smartphones' && product.condition === 'USED' ? `In Stock (${product.stockQuantity})` : 'In Stock') 
+                              : 'Out of Stock'}
+                          </span>
+                        </button>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-2">
+                        <button
+                          onClick={() => openEditModal(product)}
+                          className="px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-xl transition inline-flex items-center gap-1"
+                        >
+                          <Edit2 size={14} /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product.id)}
+                          className="px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl transition inline-flex items-center gap-1"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

@@ -88,6 +88,47 @@ export async function GET(request: NextRequest) {
 
     // 3. Define individual default iPhone models
     const productsToRestore = [
+      // iPhone 17 Series
+      {
+        name: 'iPhone 17 Pro Max',
+        description: 'Next-Generation Apple A19 Pro chip, 6.9-inch ProMotion Super Retina XDR display, Ultra-Titanium design, 48MP Triple Fusion Cameras with 10x Optical Zoom, and Wi-Fi 7.',
+        price: 18500.00,
+        stockQuantity: 10,
+        images: ['/iphones-default/iphone-17-pro-colors.png'],
+        categoryId: smartphonesCat.id,
+        condition: 'NEW',
+        features: {
+          storage: ['256GB', '512GB', '1TB'],
+          colors: getColorsForQuery('iPhone 16 Pro Max'),
+        },
+      },
+      {
+        name: 'iPhone 17 Pro',
+        description: 'Next-Generation Apple A19 Pro chip, 6.3-inch ProMotion 120Hz display, Lightweight Titanium chassis, advanced Camera Control, and all-day battery life.',
+        price: 16800.00,
+        stockQuantity: 8,
+        images: ['/iphones-default/iphone-17-pro-colors.png'],
+        categoryId: smartphonesCat.id,
+        condition: 'NEW',
+        features: {
+          storage: ['128GB', '256GB', '512GB', '1TB'],
+          colors: getColorsForQuery('iPhone 16 Pro'),
+        },
+      },
+      {
+        name: 'iPhone 17',
+        description: 'Next-Generation Apple A19 Bionic chip, 6.1-inch Super Retina XDR OLED display, Dynamic Island, 48MP Dual Fusion Camera system, and Action Button.',
+        price: 14200.00,
+        stockQuantity: 12,
+        images: ['/iphones-default/iphone-17-colors.png'],
+        categoryId: smartphonesCat.id,
+        condition: 'NEW',
+        features: {
+          storage: ['128GB', '256GB', '512GB'],
+          colors: getColorsForQuery('iPhone 16'),
+        },
+      },
+
       // iPhone 16
       {
         name: 'iPhone 16 Pro Max',

@@ -30,20 +30,13 @@ function SuccessContent() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Link 
-          href="/track" 
-          className="flex-1 bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2"
-        >
-          <Package size={18} />
-          Track Order
-        </Link>
+      <div className="flex justify-center">
         <Link 
           href="/" 
-          className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-red-600/25 transition flex items-center justify-center gap-2 active:scale-95"
         >
           <Home size={18} />
-          Return Home
+          <span>Continue Shopping</span>
         </Link>
       </div>
     </div>

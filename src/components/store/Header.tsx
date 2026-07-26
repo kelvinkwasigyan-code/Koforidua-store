@@ -13,7 +13,6 @@ export const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'New Arrivals', href: '/new-arrivals' },
   { name: 'Home Used', href: '/home-used' },
-  { name: 'Track Order', href: '/track' },
 ];
 
 export default function Header() {
@@ -88,14 +87,19 @@ export default function Header() {
                 height={40} 
                 className="object-contain rounded-xl shadow-xs"
               />
-              <span className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl flex items-center gap-2">
+              <div className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl flex items-center gap-2">
                 <span className="font-black tracking-tighter bg-gradient-to-r from-gray-950 via-red-600 to-red-500 bg-clip-text text-transparent">
                   Joerich
                 </span>
-                <span className="font-bold tracking-[0.18em] text-red-600 text-xs sm:text-sm uppercase bg-red-50/90 dark:bg-red-950/50 px-2 py-0.5 rounded-md border border-red-200/80 dark:border-red-900/80 shadow-2xs">
-                  PHONES
-                </span>
-              </span>
+                <div className="flex flex-col items-center justify-center leading-none">
+                  <span className="font-bold tracking-[0.18em] text-red-600 text-xs sm:text-sm uppercase bg-red-50/90 dark:bg-red-950/50 px-2 py-0.5 rounded-md border border-red-200/80 dark:border-red-900/80 shadow-2xs">
+                    PHONES
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] font-extrabold tracking-wider text-gray-500 dark:text-gray-400 mt-1 uppercase whitespace-nowrap">
+                    & Accessories
+                  </span>
+                </div>
+              </div>
             </Link>
           </div>
 
@@ -126,14 +130,6 @@ export default function Header() {
             >
               <RefreshCw size={14} />
               <span>Swap / Sell</span>
-            </Link>
-
-            <Link 
-              href="/admin" 
-              className="p-2 text-gray-700 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100 flex items-center"
-              title="Profile / Dashboard"
-            >
-              <User size={20} />
             </Link>
 
             <Link 

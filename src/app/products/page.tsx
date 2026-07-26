@@ -28,7 +28,9 @@ function getProductImage(product: Product): string {
   }
   const cat = (product.category?.name || '').toLowerCase();
   const name = (product.name || '').toLowerCase();
-  
+
+  if (name.includes('17 pro') || name.includes('17pro')) return '/iphones-default/iphone-17-pro-colors.png';
+  if (name.includes('iphone 17') || name.includes('17')) return '/iphones-default/iphone-17-colors.png';
   if (name.includes('16 pro') || name.includes('16pro')) return '/showcase_iphone16pro.png';
   if (name.includes('ultra 2') || name.includes('apple watch')) return '/showcase_smartwatch.png';
   if (cat.includes('phone') || cat.includes('iphone') || cat.includes('smartphone') || name.includes('iphone') || name.includes('galaxy') || name.includes('pixel')) return '/iphones.PNG';
@@ -37,6 +39,37 @@ function getProductImage(product: Product): string {
   if (cat.includes('speaker') || name.includes('speaker') || name.includes('airpods') || name.includes('audio')) return '/speaker.PNG';
   if (cat.includes('fragrance') || cat.includes('scalp') || cat.includes('care')) return '/fragrance.PNG';
   return '/Covers.png';
+}
+
+function getPhoneReleaseRank(name: string): number {
+  const n = (name || '').toLowerCase();
+  if (n.includes('iphone 17') || n.includes('iphone17') || n.includes('17 pro') || n.includes('17pro')) {
+    return 170 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('plus') ? 2 : 1);
+  }
+  if (n.includes('iphone 16') || n.includes('iphone16') || n.includes('16 pro') || n.includes('16pro')) {
+    return 160 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('plus') ? 2 : 1);
+  }
+  if (n.includes('iphone 15') || n.includes('iphone15')) {
+    return 150 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('plus') ? 2 : 1);
+  }
+  if (n.includes('iphone 14') || n.includes('iphone14')) {
+    return 140 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('plus') ? 2 : 1);
+  }
+  if (n.includes('iphone 13') || n.includes('iphone13')) {
+    return 130 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('mini') ? 2 : 1);
+  }
+  if (n.includes('iphone 12') || n.includes('iphone12')) {
+    return 120 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : n.includes('mini') ? 2 : 1);
+  }
+  if (n.includes('iphone 11') || n.includes('iphone11')) {
+    return 110 + (n.includes('pro max') ? 4 : n.includes('pro') ? 3 : 1);
+  }
+  if (n.includes('xs max')) return 104;
+  if (n.includes('xs')) return 103;
+  if (n.includes('xr')) return 102;
+  if (n.includes('iphone x')) return 101;
+  if (n.includes('se 3') || n.includes('se')) return 90;
+  return 0;
 }
 
 export default function ProductsPage() {
@@ -49,7 +82,7 @@ export default function ProductsPage() {
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
-  
+
   // Sort State
   const [sortOption, setSortOption] = useState<string>('newest');
 
@@ -140,7 +173,7 @@ export default function ProductsPage() {
       result = result.filter(p => p.price <= Number(maxPrice));
     }
 
-    // Sort Logic
+    // Sort Logic - Default orders newest phone releases first
     switch (sortOption) {
       case 'price_asc':
         result.sort((a, b) => a.price - b.price);
@@ -150,7 +183,11 @@ export default function ProductsPage() {
         break;
       case 'newest':
       default:
-        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        result.sort((a, b) => {
+          const rankDiff = getPhoneReleaseRank(b.name) - getPhoneReleaseRank(a.name);
+          if (rankDiff !== 0) return rankDiff;
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        });
         break;
     }
 
@@ -158,13 +195,13 @@ export default function ProductsPage() {
   }, [products, selectedCategories, selectedConditions, minPrice, maxPrice, sortOption]);
 
   const toggleCategory = (cat: string) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories(prev =>
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
     );
   };
 
   const toggleCondition = (cond: string) => {
-    setSelectedConditions(prev => 
+    setSelectedConditions(prev =>
       prev.includes(cond) ? prev.filter(c => c !== cond) : [...prev, cond]
     );
   };
@@ -196,16 +233,15 @@ export default function ProductsPage() {
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Category</h3>
           <div className="space-y-2">
             {availableCategories.map(cat => (
-              <label 
-                key={cat} 
+              <label
+                key={cat}
                 onClick={() => toggleCategory(cat)}
                 className="flex items-center gap-3 cursor-pointer group select-none"
               >
-                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                  selectedCategories.includes(cat) 
-                    ? 'bg-red-600 border-red-600 text-white' 
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${selectedCategories.includes(cat)
+                    ? 'bg-red-600 border-red-600 text-white'
                     : 'bg-white border-gray-300 group-hover:border-red-400'
-                }`}>
+                  }`}>
                   {selectedCategories.includes(cat) && <Check size={14} strokeWidth={3} />}
                 </div>
                 <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{cat}</span>
@@ -222,16 +258,15 @@ export default function ProductsPage() {
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Condition</h3>
         <div className="space-y-2">
           {availableConditions.map(cond => (
-            <label 
-              key={cond.value} 
+            <label
+              key={cond.value}
               onClick={() => toggleCondition(cond.value)}
               className="flex items-center gap-3 cursor-pointer group select-none"
             >
-              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                selectedConditions.includes(cond.value) 
-                  ? 'bg-red-600 border-red-600 text-white' 
+              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${selectedConditions.includes(cond.value)
+                  ? 'bg-red-600 border-red-600 text-white'
                   : 'bg-white border-gray-300 group-hover:border-red-400'
-              }`}>
+                }`}>
                 {selectedConditions.includes(cond.value) && <Check size={14} strokeWidth={3} />}
               </div>
               <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{cond.label}</span>
@@ -246,17 +281,17 @@ export default function ProductsPage() {
       <div className="space-y-3">
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Price (GH₵)</h3>
         <div className="flex items-center gap-2">
-          <input 
-            type="number" 
-            placeholder="Min" 
+          <input
+            type="number"
+            placeholder="Min"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm focus:border-red-500 outline-none transition-colors"
           />
           <span className="text-gray-400">-</span>
-          <input 
-            type="number" 
-            placeholder="Max" 
+          <input
+            type="number"
+            placeholder="Max"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm focus:border-red-500 outline-none transition-colors"
@@ -269,17 +304,17 @@ export default function ProductsPage() {
   return (
     <main className="min-h-screen bg-gray-50/50 pb-20 pt-6">
       <div className="max-w-7xl mx-auto px-4">
-        
+
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">All Products</h1>
             <p className="text-sm text-gray-500 mt-1">Explore our full catalog of premium devices and accessories.</p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {/* Mobile Filter Toggle */}
-            <button 
+            <button
               onClick={() => setIsMobileFilterOpen(true)}
               className="md:hidden flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm"
             >
@@ -288,7 +323,7 @@ export default function ProductsPage() {
 
             {/* Sort Dropdown */}
             <div className="relative group shrink-0">
-              <select 
+              <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
                 className="appearance-none bg-white border border-gray-200 px-4 py-2 pr-10 rounded-xl text-sm font-bold text-gray-700 shadow-sm outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all cursor-pointer"
@@ -325,7 +360,7 @@ export default function ProductsPage() {
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">No products found</h3>
                 <p className="text-sm text-gray-500 mt-1 max-w-sm">Try adjusting your filters or search criteria to find what you're looking for.</p>
-                <button 
+                <button
                   onClick={clearFilters}
                   className="mt-6 bg-red-50 text-red-600 px-6 py-2 rounded-xl text-sm font-bold hover:bg-red-100 transition-colors"
                 >
@@ -342,19 +377,18 @@ export default function ProductsPage() {
                       className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
                     >
                       <Link href={`/products/${product.id}`} className="block flex-grow relative">
-                        <div className="h-40 sm:h-52 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-2">
-                          <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${
-                            product.condition === 'USED'
+                        <div className="h-40 sm:h-48 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-2.5">
+                          <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
                               ? 'bg-amber-500 text-white border-amber-600'
                               : 'bg-emerald-600 text-white border-emerald-700'
-                          }`}>
+                            }`}>
                             {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
                           </span>
 
                           <img
                             src={getProductImage(product)}
                             alt={product.name}
-                            className="h-32 sm:h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-108 group-hover:-translate-y-1"
+                            className="h-32 sm:h-40 w-auto max-w-full object-contain transition-transform duration-500 group-hover:scale-108 group-hover:-translate-y-1"
                           />
 
                           {product.stockQuantity === 0 && (
@@ -427,7 +461,7 @@ export default function ProductsPage() {
               <FilterSidebar />
             </div>
             <div className="p-4 border-t bg-white">
-              <button 
+              <button
                 onClick={() => setIsMobileFilterOpen(false)}
                 className="w-full bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-red-600/30 active:scale-95 transition-transform"
               >

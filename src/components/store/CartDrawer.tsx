@@ -11,6 +11,23 @@ const CartDrawer = () => {
 
   if (!isOpen) return null;
 
+  const [whatsappDisplayNumber, setWhatsappDisplayNumber] = React.useState('0547654736');
+  const [formattedWaNumber, setFormattedWaNumber] = React.useState('233547654736');
+
+  React.useEffect(() => {
+    async function loadSettings() {
+      const { fetchStoreSettings, formatWhatsAppNumber } = await import('@/lib/storeSettings');
+      const s = await fetchStoreSettings();
+      if (s.whatsappNumber) {
+        setWhatsappDisplayNumber(s.whatsappNumber);
+        setFormattedWaNumber(formatWhatsAppNumber(s.whatsappNumber));
+      }
+    }
+    if (isOpen) {
+      loadSettings();
+    }
+  }, [isOpen]);
+
   const handleWhatsAppCheckout = () => {
     if (cart.length === 0) return;
 
@@ -26,10 +43,9 @@ const CartDrawer = () => {
 
     message += `\n*Total Amount: GH₵ ${total.toLocaleString()}*\n\nPlease let me know about delivery/pickup options!`;
 
-    const phoneNumber = "233547654736"; 
     const encodedMessage = encodeURIComponent(message);
     
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/${formattedWaNumber}?text=${encodedMessage}`, '_blank');
   };
 
   return (
@@ -145,7 +161,7 @@ const CartDrawer = () => {
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 active:scale-95"
               >
                 <MessageCircle size={17} />
-                <span>Order via WhatsApp (0547654736)</span>
+                <span>Order via WhatsApp ({whatsappDisplayNumber})</span>
               </button>
 
               {/* Web Checkout Link */}

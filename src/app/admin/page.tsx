@@ -54,67 +54,85 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-[11px] font-semibold text-red-600 uppercase tracking-wider mb-2">
-            <Sparkles size={13} /> Joel Arhin's Console
+      {/* Store Background Hero Showcase Banner */}
+      <div className="relative rounded-3xl overflow-hidden border border-white/20 dark:border-white/10 shadow-xl shadow-slate-900/10 min-h-[160px] sm:min-h-[200px] flex items-end p-6 sm:p-8 group">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-105"
+          style={{ backgroundImage: "url('/store-background.jpg')" }}
+        />
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+
+        <div className="relative z-10 space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-600/80 backdrop-blur-md text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-md">
+            <Sparkles size={13} /> Joerich Phones & Accessories Official Console
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Dashboard Overview
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-snug">
+            Admin Dashboard Overview
           </h1>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Manage your store inventory, track customer orders, and analyze live store metrics.
+          <p className="text-xs sm:text-sm text-gray-200 font-medium max-w-xl">
+            Manage store inventory, track live customer orders, configure WhatsApp routing, and analyze business performance.
           </p>
         </div>
       </div>
 
-      {/* Metrics Row - Frosted Glass Cards */}
+      {/* High-Visibility Metrics Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {/* Sales Revenue */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:shadow-xl transition-all duration-300">
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
+        
+        {/* Total Sales Revenue */}
+        <div className="bg-[#0F172A] border-2 border-emerald-500/30 p-6 sm:p-7 rounded-3xl shadow-xl relative overflow-hidden group hover:border-emerald-500/60 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
           <div className="flex items-center justify-between relative z-10">
-            <div>
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Sales Revenue</span>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1.5 tracking-tight">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black uppercase tracking-wider">
+                <DollarSign size={13} /> Sales Revenue
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-white mt-1 tracking-tight">
                 {loading ? '...' : `GH₵ ${stats?.totalSales.toLocaleString() || '0'}`}
               </p>
+              <span className="text-[11px] font-bold text-slate-400 block pt-0.5">Total completed shop sales</span>
             </div>
-            <div className="w-13 h-13 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
-              <DollarSign className="w-6 h-6" />
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/10">
+              <DollarSign className="w-7 h-7" />
             </div>
           </div>
         </div>
 
         {/* Total Products */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:shadow-xl transition-all duration-300">
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
+        <div className="bg-[#0F172A] border-2 border-sky-500/30 p-6 sm:p-7 rounded-3xl shadow-xl relative overflow-hidden group hover:border-sky-500/60 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-36 h-36 bg-sky-500/15 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
           <div className="flex items-center justify-between relative z-10">
-            <div>
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Products</span>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1.5 tracking-tight">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-sky-500/15 border border-sky-500/30 text-sky-400 text-[11px] font-black uppercase tracking-wider">
+                <ShoppingBag size={13} /> Active Inventory
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-white mt-1 tracking-tight">
                 {loading ? '...' : stats?.totalProducts || 0}
               </p>
+              <span className="text-[11px] font-bold text-slate-400 block pt-0.5">Total items in catalog</span>
             </div>
-            <div className="w-13 h-13 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-inner">
-              <ShoppingBag className="w-6 h-6" />
+            <div className="w-14 h-14 rounded-2xl bg-sky-500/20 border border-sky-500/40 text-sky-400 flex items-center justify-center shrink-0 shadow-lg shadow-sky-500/10">
+              <ShoppingBag className="w-7 h-7" />
             </div>
           </div>
         </div>
 
         {/* Pending Orders */}
-        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:shadow-xl transition-all duration-300">
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-red-500/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
+        <div className="bg-[#0F172A] border-2 border-rose-500/40 p-6 sm:p-7 rounded-3xl shadow-xl relative overflow-hidden group hover:border-rose-500/70 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-36 h-36 bg-rose-500/20 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-all duration-500" />
           <div className="flex items-center justify-between relative z-10">
-            <div>
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pending Orders</span>
-              <p className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-500 mt-1.5 tracking-tight">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-rose-500/20 border border-rose-500/40 text-rose-400 text-[11px] font-black uppercase tracking-wider">
+                <Clock size={13} className="animate-spin-slow" /> Action Needed
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-rose-400 mt-1 tracking-tight">
                 {loading ? '...' : stats?.pendingOrders || 0}
               </p>
+              <span className="text-[11px] font-bold text-rose-300/80 block pt-0.5">Orders awaiting dispatch</span>
             </div>
-            <div className="w-13 h-13 rounded-2xl bg-red-500/10 dark:bg-red-500/20 border border-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 shadow-inner">
-              <Clock className="w-6 h-6" />
+            <div className="w-14 h-14 rounded-2xl bg-rose-500/25 border border-rose-500/50 text-rose-400 flex items-center justify-center shrink-0 shadow-lg shadow-rose-500/20">
+              <Clock className="w-7 h-7" />
             </div>
           </div>
         </div>

@@ -21,40 +21,55 @@ export default function CategoryBar({
   onSelectCategory,
 }: CategoryBarProps) {
   return (
-    <section className="relative py-8 overflow-hidden">
-      {/* Ambient Background Orbs for Glass Interaction */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-red-400/20 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 -translate-x-1/2" />
-      <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-orange-400/20 rounded-full blur-[100px] pointer-events-none -translate-y-1/2" />
+    <section className="relative py-4 sm:py-6 overflow-hidden">
+      {/* Ambient Background Orbs */}
+      <div className="absolute top-1/2 left-0 w-80 h-80 bg-red-400/10 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 -translate-x-1/2" />
+      <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-orange-400/10 rounded-full blur-[100px] pointer-events-none -translate-y-1/2" />
 
       <div className="mx-auto max-w-7xl px-4 relative z-10">
-        <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Explore Categories
           </h2>
+          {selectedCategory && (
+            <button
+              onClick={() => onSelectCategory(null)}
+              className="text-xs font-bold text-red-600 hover:underline"
+            >
+              Clear Filter ({selectedCategory})
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Floating Showcase Devices (No White Background Cards) */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 md:gap-3 items-start justify-items-center">
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.name;
             return (
               <button
                 key={cat.name}
                 onClick={() => onSelectCategory(isSelected ? null : cat.name)}
-                className="snap-start shrink-0 group flex flex-col items-center gap-4 transition-all duration-300 active:scale-95"
+                className="group flex flex-col items-center gap-1.5 transition-all duration-300 w-full active:scale-95 cursor-pointer"
               >
                 <div
-                  className={`relative flex h-36 w-36 md:h-[220px] md:w-[220px] items-center justify-center transition-all duration-500 ${isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:-translate-y-2 group-hover:drop-shadow-xl'
-                    }`}
+                  className={`relative flex h-28 w-28 sm:h-36 sm:w-36 md:h-48 md:w-48 items-center justify-center transition-all duration-300 ${
+                    isSelected
+                      ? 'scale-110 drop-shadow-xl'
+                      : 'group-hover:scale-110 group-hover:-translate-y-1.5 group-hover:drop-shadow-lg'
+                  }`}
                 >
                   <img
                     src={cat.image}
                     alt={cat.name}
-                    className="relative z-10 h-full w-full object-contain drop-shadow-sm transition-transform duration-500 ease-out"
+                    className="relative z-10 h-full w-full object-contain drop-shadow-md transition-transform duration-300 ease-out"
                   />
                 </div>
                 <span
-                  className={`text-center text-[13px] md:text-base font-bold tracking-tight transition-colors mt-1 ${isSelected ? 'text-red-600' : 'text-gray-600 group-hover:text-gray-900'
-                    }`}
+                  className={`text-center text-[12px] sm:text-xs font-bold tracking-tight line-clamp-2 transition-colors px-1 py-0.5 rounded-full ${
+                    isSelected
+                      ? 'text-red-600 dark:text-red-400 bg-red-500/10 border border-red-500/20 px-2.5'
+                      : 'text-gray-700 dark:text-gray-300 group-hover:text-red-600 dark:group-hover:text-white'
+                  }`}
                 >
                   {cat.name}
                 </span>

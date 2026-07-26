@@ -34,7 +34,7 @@ export default function MobileBottomNav() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-gray-200/80 shadow-lg px-3 py-2 flex items-center justify-around">
+    <div className="md:hidden fixed bottom-3 left-4 right-4 z-40 bg-white/75 dark:bg-slate-900/75 backdrop-blur-3xl border border-white/80 dark:border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.15)] rounded-3xl px-3 py-2 flex items-center justify-around">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
@@ -42,14 +42,16 @@ export default function MobileBottomNav() {
           <Link
             key={item.label}
             href={item.href}
-            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all relative ${
-              isActive ? 'text-red-600 font-bold scale-105' : 'text-gray-500 hover:text-gray-900 font-medium'
+            className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-all relative ${
+              isActive 
+                ? 'text-red-600 font-extrabold scale-105 bg-red-500/10' 
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
             }`}
           >
             <div className="relative">
-              <Icon size={20} className={isActive ? 'stroke-[2.5px]' : 'stroke-2'} />
+              <Icon size={20} className={isActive ? 'stroke-[2.5px] text-red-600' : 'stroke-2'} />
               {Boolean(item.badge && item.badge > 0) && (
-                <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">
+                <span className="absolute -top-1.5 -right-2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
                   {item.badge}
                 </span>
               )}
@@ -62,12 +64,12 @@ export default function MobileBottomNav() {
       {/* Cart Quick Button */}
       <button
         onClick={openCart}
-        className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all relative text-gray-500 hover:text-gray-900 font-medium active:scale-95"
+        className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-all relative text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium active:scale-95"
       >
         <div className="relative">
           <ShoppingBag size={20} className="stroke-2" />
           {totalCartItems > 0 && (
-            <span className="absolute -top-1.5 -right-2 bg-red-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">
+            <span className="absolute -top-1.5 -right-2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
               {totalCartItems}
             </span>
           )}

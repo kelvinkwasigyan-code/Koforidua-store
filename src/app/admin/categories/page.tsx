@@ -139,7 +139,7 @@ export default function AdminCategoriesPage() {
       {/* Header Title & Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Category Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Category Management</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Create new store categories or edit existing ones.
           </p>
@@ -159,7 +159,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Search Filter Bar */}
-      <div className="bg-white dark:bg-gray-900 p-4 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3">
+      <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl p-4 rounded-3xl border border-white/80 dark:border-white/10 shadow-xs flex items-center gap-3">
         <Search size={18} className="text-gray-400" />
         <input
           type="text"
@@ -171,7 +171,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Categories Table Card */}
-      <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+      <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-3xl border border-white/80 dark:border-white/10 shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-gray-400 font-bold text-sm">Loading categories...</div>
         ) : filteredCategories.length === 0 ? (

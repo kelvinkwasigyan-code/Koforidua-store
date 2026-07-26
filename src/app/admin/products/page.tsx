@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Upload, CheckCircle2, Image as ImageIcon, AlertCircle, Check, RotateCcw } from 'lucide-react';
+import { Plus, Trash2, Upload, CheckCircle2, Image as ImageIcon, AlertCircle, Check, RotateCcw, Edit2, Tag } from 'lucide-react';
 import Image from 'next/image';
 import { getColorsForQuery, iPhoneColor, IPHONE_COLORS } from '@/lib/iphoneColors';
 
 const STORAGE_OPTIONS = ['64GB', '128GB', '256GB', '512GB', '1TB'];
+const MODEL_VARIANTS = ['Standard', 'Plus', 'Pro', 'Pro Max'];
+const SHOWCASE_IMAGES = ['/iphones.PNG', '/tablet.PNG', '/Watches.png', '/speaker.PNG', '/fragrance.PNG', '/Covers.png'];
 
 interface Category {
   id: string;
@@ -27,7 +29,11 @@ interface Product {
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterCondition, setFilterCondition] = useState<'ALL' | 'NEW' | 'USED'>('ALL');
+  const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('ALL');
+  const [categoriesList, setCategoriesList] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   // Form State
@@ -48,9 +54,25 @@ export default function AdminProductsPage() {
   // Storage Selection State
   const [selectedStorage, setSelectedStorage] = useState<string[]>([]);
 
+  // Model Variant Selection State (Pro, Pro Max, etc.)
+  const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setCategoriesList(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  }
 
   async function fetchProducts() {
     try {
@@ -95,49 +117,109 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleAddProduct = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setName('');
+    setCategoryName(selectedCategoryTab !== 'ALL' ? selectedCategoryTab : 'Smartphones');
+    setPrice('');
+    setStockQuantity('');
+    setDescription('');
+    setCondition('NEW');
+    setImageUrls([]);
+    setSelectedColors([]);
+    setSelectedStorage([]);
+    setSelectedVariants([]);
+    setEditingProductId(null);
+  };
+
+  const openEditModal = (product: any) => {
+    setEditingProductId(product.id);
+    setName(product.name || '');
+    setCategoryName(product.category?.name || 'Smartphones');
+    setPrice(product.price ? String(product.price) : '');
+    setStockQuantity(product.stockQuantity !== undefined ? String(product.stockQuantity) : '0');
+    setCondition(product.condition || 'NEW');
+    setDescription(product.description || '');
+    setImageUrls(product.images || []);
+    setSelectedColors(product.features?.colors || []);
+    setSelectedStorage(product.features?.storage || []);
+    setSelectedVariants(product.features?.variants || []);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !price || !stockQuantity) return;
+    if (!name || !price) return;
 
     setSubmitting(true);
+    const finalStockQuantity = (categoryName === 'Smartphones' || stockQuantity !== '') ? (stockQuantity || '10') : '10';
+
     try {
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
+      const endpoint = editingProductId ? `/api/products/${editingProductId}` : '/api/admin/products';
+      const method = editingProductId ? 'PUT' : 'POST';
+
+      const res = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
           categoryName,
           price: parseFloat(price),
-          stockQuantity: parseInt(stockQuantity, 10),
+          stockQuantity: parseInt(finalStockQuantity, 10),
           condition,
           description,
           images: imageUrls.length > 0 ? imageUrls : ['/logo.jpg'],
-          colors: selectedColors,
-          storage: selectedStorage,
+          features: {
+            colors: selectedColors,
+            storage: selectedStorage,
+            variants: selectedVariants,
+          },
         }),
       });
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || 'Failed to create product');
+        throw new Error(errData.error || 'Failed to save product');
       }
 
       await fetchProducts();
       setIsModalOpen(false);
-
-      // Reset Form
-      setName('');
-      setPrice('');
-      setStockQuantity('');
-      setDescription('');
-      setCondition('NEW');
-      setImageUrls([]);
-      setSelectedColors([]);
-      setSelectedStorage([]);
+      resetForm();
     } catch (err: any) {
       alert(err.message || 'An error occurred');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleToggleCondition = async (product: Product) => {
+    const newCondition = product.condition === 'USED' ? 'NEW' : 'USED';
+    try {
+      const res = await fetch(`/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ condition: newCondition }),
+      });
+      if (res.ok) {
+        setProducts(products.map(p => p.id === product.id ? { ...p, condition: newCondition } : p));
+      }
+    } catch (err) {
+      console.error('Failed to toggle condition:', err);
+    }
+  };
+
+  const handleToggleAvailability = async (product: Product) => {
+    const newQuantity = product.stockQuantity > 0 ? 0 : 10;
+    try {
+      const res = await fetch(`/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stockQuantity: newQuantity }),
+      });
+      if (res.ok) {
+        setProducts(products.map(p => p.id === product.id ? { ...p, stockQuantity: newQuantity } : p));
+      }
+    } catch (err) {
+      console.error('Failed to toggle availability:', err);
     }
   };
 
@@ -163,7 +245,7 @@ export default function AdminProductsPage() {
       {/* Top Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             Product Inventory
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -172,19 +254,98 @@ export default function AdminProductsPage() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            resetForm();
+            setIsModalOpen(true);
+          }}
           className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-red-600/30 transition active:scale-95 flex items-center justify-center gap-2 self-start sm:self-auto"
         >
           <Plus size={18} /> Add New Product
         </button>
       </div>
 
+      {/* Filter Toolbar: Category Selector Menu Dropdown & Condition Filters */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/60 dark:bg-slate-900/60 p-3.5 rounded-3xl border border-white/80 dark:border-white/10 backdrop-blur-xl shadow-xs">
+        
+        {/* Category Selection Menu Dropdown */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <label className="text-xs font-black uppercase text-gray-500 dark:text-gray-400 shrink-0 flex items-center gap-1.5">
+            <Tag size={15} className="text-red-600" />
+            <span>Product Category:</span>
+          </label>
+          <select
+            value={selectedCategoryTab}
+            onChange={(e) => setSelectedCategoryTab(e.target.value)}
+            className="w-full sm:w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-2.5 text-xs font-extrabold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 shadow-2xs transition cursor-pointer"
+          >
+            <option value="ALL">All Categories ({products.length} Products)</option>
+            {categoriesList.map((cat) => {
+              const catCount = products.filter((p) => p.category?.name === cat.name).length;
+              return (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name} ({catCount})
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        {/* Condition Filter Tabs */}
+        {(() => {
+          const categoryFilteredProducts = products.filter(
+            (p) =>
+              !p.images?.some((img: string) => SHOWCASE_IMAGES.includes(img)) &&
+              (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
+          );
+          const brandNewCount = categoryFilteredProducts.filter((p) => p.condition !== 'USED').length;
+          const homeUsedCount = categoryFilteredProducts.filter((p) => p.condition === 'USED').length;
+
+          return (
+            <div className="flex items-center gap-1.5 bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-2xl border border-gray-200/60 dark:border-gray-700/60">
+              <button
+                onClick={() => setFilterCondition('ALL')}
+                className={`px-3.5 py-1.5 text-xs font-extrabold rounded-xl transition-all ${
+                  filterCondition === 'ALL'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/20'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                }`}
+              >
+                All Conditions
+              </button>
+              <button
+                onClick={() => setFilterCondition('NEW')}
+                className={`px-3.5 py-1.5 text-xs font-extrabold rounded-xl transition-all ${
+                  filterCondition === 'NEW'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'
+                }`}
+              >
+                Brand New ({brandNewCount})
+              </button>
+              <button
+                onClick={() => setFilterCondition('USED')}
+                className={`px-3.5 py-1.5 text-xs font-extrabold rounded-xl transition-all ${
+                  filterCondition === 'USED'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-amber-600'
+                }`}
+              >
+                Home Used ({homeUsedCount})
+              </button>
+            </div>
+          );
+        })()}
+      </div>
+
       {/* Product Table Card */}
       <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
         {loading ? (
           <div className="py-12 text-center text-sm text-gray-500">Loading products...</div>
-        ) : products.length === 0 ? (
-          <div className="py-12 text-center text-sm text-gray-400">No products found in database.</div>
+        ) : products.filter(p => 
+            (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
+            (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
+          ).length === 0 ? (
+          <div className="py-12 text-center text-sm text-gray-400">No products found in {selectedCategoryTab !== 'ALL' ? selectedCategoryTab : 'this view'}.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
@@ -199,7 +360,13 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                {products.map((product) => (
+                {products
+                  .filter((p) => 
+                    !p.images?.some((img: string) => SHOWCASE_IMAGES.includes(img)) &&
+                    (filterCondition === 'ALL' || (filterCondition === 'USED' ? p.condition === 'USED' : p.condition !== 'USED')) &&
+                    (selectedCategoryTab === 'ALL' || p.category?.name === selectedCategoryTab)
+                  )
+                  .map((product) => (
                   <tr key={product.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition">
                     <td className="py-4 px-6 flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 p-1 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
@@ -217,27 +384,46 @@ export default function AdminProductsPage() {
                       {product.category?.name || 'Uncategorized'}
                     </td>
                     <td className="py-4 px-6">
-                      <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                        product.condition === 'USED' 
-                          ? 'bg-amber-100 text-amber-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
-                      </span>
+                      <button
+                        onClick={() => handleToggleCondition(product)}
+                        title="Click to toggle Brand New / Home Used"
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                          product.condition === 'USED' 
+                            ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800' 
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                        }`}
+                      >
+                        <span>{product.condition === 'USED' ? 'Home Used' : 'Brand New'}</span>
+                      </button>
                     </td>
                     <td className="py-4 px-6 font-bold text-gray-900 dark:text-white">
                       GH₵ {Number(product.price).toLocaleString()}
                     </td>
                     <td className="py-4 px-6">
-                      <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold ${
-                        product.stockQuantity > 0
-                          ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400'
-                          : 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400'
-                      }`}>
-                        {product.stockQuantity > 0 ? `${product.stockQuantity} in stock` : 'Out of Stock'}
-                      </span>
+                      <button
+                        onClick={() => handleToggleAvailability(product)}
+                        title="Click to toggle In Stock / Out of Stock"
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                          product.stockQuantity > 0
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                            : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800'
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                        <span>
+                          {product.stockQuantity > 0 
+                            ? (product.category?.name === 'Smartphones' && product.condition === 'USED' ? `In Stock (${product.stockQuantity})` : 'In Stock') 
+                            : 'Out of Stock'}
+                        </span>
+                      </button>
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-4 px-6 text-right space-x-2">
+                      <button
+                        onClick={() => openEditModal(product)}
+                        className="px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-xl transition inline-flex items-center gap-1"
+                      >
+                        <Edit2 size={14} /> Edit
+                      </button>
                       <button
                         onClick={() => handleDelete(product.id)}
                         className="px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl transition inline-flex items-center gap-1"
@@ -275,7 +461,7 @@ export default function AdminProductsPage() {
               <div>
                 <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-800">
                   <h2 className="text-xl font-extrabold text-gray-900 dark:text-white">
-                    Add New Product
+                    {editingProductId ? 'Edit Product' : 'Add New Product'}
                   </h2>
                   <button
                     onClick={() => setIsModalOpen(false)}
@@ -285,7 +471,7 @@ export default function AdminProductsPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleAddProduct} id="productForm" className="mt-6 space-y-4">
+                <form onSubmit={handleSaveProduct} id="productForm" className="mt-6 space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
                       Product Name
@@ -293,7 +479,19 @@ export default function AdminProductsPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. iPhone 15 Pro Max 256GB"
+                      placeholder={
+                        categoryName === 'Speakers'
+                          ? 'e.g. JBL Flip 6'
+                          : categoryName === 'Tablets'
+                          ? 'e.g. iPad Pro 12.9'
+                          : categoryName === 'Watches'
+                          ? 'e.g. Apple Watch Ultra 2'
+                          : categoryName === 'Fragrance & Scalp Care'
+                          ? 'e.g. Luxury Designer Perfume'
+                          : categoryName === 'Accessories'
+                          ? 'e.g. 20W Fast Power Adapter'
+                          : 'e.g. iPhone 16 Pro Max'
+                      }
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-red-600 outline-none text-sm font-medium"
@@ -332,44 +530,90 @@ export default function AdminProductsPage() {
                     </select>
                   </div>
 
-                  {/* Storage Capacity Selection */}
-                  <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
-                        Storage Capacity Options
-                      </label>
-                      <span className="text-[10px] text-gray-500 font-semibold">
-                        {selectedStorage.length} selected
-                      </span>
-                    </div>
+                  {/* Model Variant Selection (Pro / Pro Max / Standard / Plus) */}
+                  {(categoryName === 'Smartphones' || categoryName === 'Tablets' || name.toLowerCase().includes('iphone')) && (
+                    <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
+                          Available Model Variants
+                        </label>
+                        <span className="text-[10px] text-gray-500 font-semibold">
+                          {selectedVariants.length} selected
+                        </span>
+                      </div>
 
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {STORAGE_OPTIONS.map((opt) => {
-                        const isSelected = selectedStorage.includes(opt);
-                        return (
-                          <button
-                            type="button"
-                            key={opt}
-                            onClick={() => {
-                              if (isSelected) {
-                                setSelectedStorage(selectedStorage.filter((s) => s !== opt));
-                              } else {
-                                setSelectedStorage([...selectedStorage, opt]);
-                              }
-                            }}
-                            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border ${
-                              isSelected
-                                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 border-gray-900 dark:border-white shadow-xs'
-                                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
-                            }`}
-                          >
-                            {opt}
-                          </button>
-                        );
-                      })}
+                      <p className="text-[11px] text-gray-500">
+                        Indicate stock availability for <strong>Pro</strong>, <strong>Pro Max</strong>, etc. to combine listings:
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {MODEL_VARIANTS.map((variant) => {
+                          const isSelected = selectedVariants.includes(variant);
+                          return (
+                            <button
+                              type="button"
+                              key={variant}
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedVariants(selectedVariants.filter((v) => v !== variant));
+                                } else {
+                                  setSelectedVariants([...selectedVariants, variant]);
+                                }
+                              }}
+                              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all border ${
+                                isSelected
+                                  ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-600/20'
+                                  : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
+                              }`}
+                            >
+                              {variant}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                  {categoryName === 'Smartphones' && condition === 'NEW' && (
+                  )}
+
+                  {/* Storage Capacity Selection (Smartphones & Tablets Only) */}
+                  {(categoryName === 'Smartphones' || categoryName === 'Tablets' || categoryName === 'iPhones' || categoryName === 'iPads') && (
+                    <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
+                          Storage Capacity Options
+                        </label>
+                        <span className="text-[10px] text-gray-500 font-semibold">
+                          {selectedStorage.length} selected
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {STORAGE_OPTIONS.map((opt) => {
+                          const isSelected = selectedStorage.includes(opt);
+                          return (
+                            <button
+                              type="button"
+                              key={opt}
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedStorage(selectedStorage.filter((s) => s !== opt));
+                                } else {
+                                  setSelectedStorage([...selectedStorage, opt]);
+                                }
+                              }}
+                              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                                isSelected
+                                  ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 border-gray-900 dark:border-white shadow-xs'
+                                  : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {categoryName === 'Smartphones' && condition === 'NEW' && name.trim().length > 0 && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
                       <div className="flex justify-between items-center">
                         <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
@@ -425,7 +669,7 @@ export default function AdminProductsPage() {
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className={`grid ${categoryName === 'Smartphones' ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
                         Price (GH₵)
@@ -440,19 +684,21 @@ export default function AdminProductsPage() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
-                        Stock Quantity
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        placeholder="5"
-                        value={stockQuantity}
-                        onChange={(e) => setStockQuantity(e.target.value)}
-                        className="w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-red-600 outline-none text-sm font-medium"
-                      />
-                    </div>
+                    {categoryName === 'Smartphones' && (
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
+                          Stock Quantity
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          placeholder="5"
+                          value={stockQuantity}
+                          onChange={(e) => setStockQuantity(e.target.value)}
+                          className="w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-red-600 outline-none text-sm font-medium"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Image File Upload Integration */}

@@ -3,6 +3,50 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
+    // Reassign outdated/duplicate category names to clean standardized names
+    const mobilePhonesCat = await prisma.category.findUnique({ where: { name: 'Mobile Phones' } });
+    if (mobilePhonesCat) {
+      let smartphonesCat = await prisma.category.findUnique({ where: { name: 'Smartphones' } });
+      if (!smartphonesCat) {
+        smartphonesCat = await prisma.category.create({ data: { name: 'Smartphones' } });
+      }
+      // Reassign all products from Mobile Phones to Smartphones
+      await (prisma as any).product.updateMany({
+        where: { categoryId: mobilePhonesCat.id },
+        data: { categoryId: smartphonesCat.id },
+      });
+      // Delete old Mobile Phones category
+      await prisma.category.delete({ where: { id: mobilePhonesCat.id } });
+    }
+
+    // Merge Chargers / Phone Accessories into Accessories
+    const chargersCat = await prisma.category.findUnique({ where: { name: 'Chargers' } });
+    const phoneAccCat = await prisma.category.findUnique({ where: { name: 'Phone Accessories' } });
+    if (chargersCat || phoneAccCat) {
+      let accessoriesCat = await prisma.category.findFirst({
+        where: { OR: [{ name: 'Accessories' }, { name: 'Covers & Accessories' }] },
+      });
+      if (!accessoriesCat) {
+        accessoriesCat = await prisma.category.create({ data: { name: 'Accessories' } });
+      }
+
+      if (chargersCat) {
+        await (prisma as any).product.updateMany({
+          where: { categoryId: chargersCat.id },
+          data: { categoryId: accessoriesCat.id },
+        });
+        await prisma.category.delete({ where: { id: chargersCat.id } });
+      }
+
+      if (phoneAccCat) {
+        await (prisma as any).product.updateMany({
+          where: { categoryId: phoneAccCat.id },
+          data: { categoryId: accessoriesCat.id },
+        });
+        await prisma.category.delete({ where: { id: phoneAccCat.id } });
+      }
+    }
+
     const categories = await (prisma as any).category.findMany({
       include: {
         _count: {

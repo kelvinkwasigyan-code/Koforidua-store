@@ -95,37 +95,45 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
         {filteredProducts.map((product) => (
           <div 
             key={product.id} 
-            className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col group relative"
+            className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative"
           >
             <Link href={`/products/${product.id}`} className="block flex-grow relative">
-              {/* Hover Color Pill Overlay */}
-              {product.features?.colors && Array.isArray(product.features.colors) && product.features.colors.length > 0 && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 pointer-events-none z-10">
-                  <div className="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-gray-200/80 flex items-center gap-1.5 whitespace-nowrap">
-                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-wider mr-0.5">Colors:</span>
-                    {product.features.colors.slice(0, 4).map((c: any, idx: number) => (
-                      <span
-                        key={idx}
-                        className="w-3 h-3 rounded-full border border-black/10 shadow-2xs inline-block"
-                        style={{ backgroundColor: c.hex }}
-                        title={c.name}
-                      />
-                    ))}
-                    {product.features.colors.length > 4 && (
-                      <span className="text-[10px] font-bold text-gray-400">+{product.features.colors.length - 4}</span>
-                    )}
-                  </div>
-                </div>
-              )}
+              <div className="h-52 w-full overflow-hidden bg-white/40 dark:bg-slate-800/40 backdrop-blur-md flex items-center justify-center relative">
+                <span className={`absolute top-3 left-3 z-10 text-[10px] font-black px-2.5 py-0.5 rounded-full backdrop-blur-xl border shadow-2xs ${
+                  product.condition === 'USED'
+                    ? 'bg-amber-500/90 text-white border-amber-300'
+                    : 'bg-emerald-600/90 text-white border-emerald-400'
+                }`}>
+                  {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
+                </span>
 
-              <div className="h-48 w-full overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                {/* Hover Color Pill Overlay (Floating Under Phone Image) */}
+                {product.features?.colors && Array.isArray(product.features.colors) && product.features.colors.length > 0 && (
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none z-20">
+                    <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl px-3 py-1 rounded-full shadow-lg border border-white/80 dark:border-white/10 flex items-center gap-1.5 whitespace-nowrap">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mr-0.5">Colors:</span>
+                      {product.features.colors.slice(0, 4).map((c: any, idx: number) => (
+                        <span
+                          key={idx}
+                          className="w-3 h-3 rounded-full border border-black/10 shadow-2xs inline-block"
+                          style={{ backgroundColor: c.hex }}
+                          title={c.name}
+                        />
+                      ))}
+                      {product.features.colors.length > 4 && (
+                        <span className="text-[10px] font-bold text-gray-400">+{product.features.colors.length - 4}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     toggleWishlist(product.id);
                   }}
-                  className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-gray-200/60 hover:bg-white transition active:scale-90"
+                  className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-xs border border-white/80 dark:border-white/10 hover:bg-white transition active:scale-90"
                   title="Wishlist"
                 >
                   <Heart
@@ -136,15 +144,15 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
                 <img
                   src={getProductImage(product)}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-contain p-4 group-hover:scale-108 transition-transform duration-500 ease-out"
                 />
               </div>
-              <div className="px-4 pt-4 flex flex-col">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-red-600 font-semibold uppercase tracking-wider">
+              <div className="px-5 pt-4 flex flex-col">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-red-600 font-extrabold uppercase tracking-wider bg-red-50/80 dark:bg-red-950/40 px-2.5 py-0.5 rounded-full border border-red-200/60 dark:border-red-900/60">
                     {product.category?.name}
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">
+                  <div className="flex items-center gap-1 text-[11px] font-extrabold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200/60 dark:border-amber-900/60">
                     <Star size={11} className="fill-amber-400 text-amber-400" />
                     <span>{product.averageRating || 5.0}</span>
                     {product.reviewCount && product.reviewCount > 0 ? (
@@ -152,21 +160,21 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
                     ) : null}
                   </div>
                 </div>
-                <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">{product.name}</h3>
-                <p className="text-gray-500 text-sm mt-1 line-clamp-2">{product.description}</p>
+                <h3 className="font-extrabold text-base text-gray-900 dark:text-white line-clamp-1 group-hover:text-red-600 transition-colors">{product.name}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{product.description}</p>
               </div>
             </Link>
             
-            <div className="p-4 flex items-center justify-between mt-auto">
-              <span className="text-xl font-bold text-gray-900">
-                GH₵{Number(product.price).toFixed(2)}
+            <div className="p-5 flex items-center justify-between mt-auto border-t border-gray-100/60 dark:border-slate-800/60">
+              <span className="text-xl font-black text-gray-900 dark:text-white tracking-tight">
+                GH₵{Number(product.price).toLocaleString()}
               </span>
               <button 
                 onClick={(e) => {
                   e.preventDefault();
                   addToCart(product);
                 }}
-                className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors active:scale-95"
+                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white px-4 py-2 rounded-2xl text-xs font-black transition-all shadow-md shadow-red-600/25 active:scale-95"
               >
                 Add to Cart
               </button>

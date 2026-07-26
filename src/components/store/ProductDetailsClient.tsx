@@ -39,6 +39,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
   const [isAdding, setIsAdding] = useState(false);
   const [selectedColor, setSelectedColor] = useState<any>(null);
   const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
 
   // Reviews State
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -82,8 +83,20 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
 
   const handleAddToCart = () => {
     setIsAdding(true);
+    const variantStr = selectedVariant || (product.features?.variants && product.features.variants[0]);
+    const storageStr = selectedStorage || (product.features?.storage && product.features.storage[0]);
+
+    let titleSuffix = [];
+    if (variantStr) titleSuffix.push(variantStr);
+    if (storageStr) titleSuffix.push(storageStr);
+
+    const customProduct = {
+      ...product,
+      name: titleSuffix.length > 0 ? `${product.name} (${titleSuffix.join(' - ')})` : product.name,
+    };
+
     for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+      addToCart(customProduct);
     }
     setTimeout(() => {
       setIsAdding(false);
@@ -272,8 +285,45 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
             </div>
           )}
 
-          {/* Storage Capacity Selection */}
-          {product.features?.storage && Array.isArray(product.features.storage) && product.features.storage.length > 0 && (
+          {/* Model Variant Selection (Pro / Pro Max / Standard / Plus) */}
+          {product.features?.variants && Array.isArray(product.features.variants) && product.features.variants.length > 0 && (
+            <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-800/40 rounded-2xl border border-gray-200/80 dark:border-white/10">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-extrabold text-gray-900 dark:text-white uppercase tracking-wider">
+                  Select Model Variant
+                </span>
+                <span className="text-xs font-bold text-red-600">
+                  {selectedVariant || product.features.variants[0]}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5">
+                {product.features.variants.map((variant: string, idx: number) => {
+                  const isSelected = (selectedVariant || product.features.variants[0]) === variant;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all border ${
+                        isSelected
+                          ? 'border-red-600 bg-red-600 text-white shadow-md shadow-red-600/20'
+                          : 'border-gray-200 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 hover:border-gray-300'
+                      }`}
+                    >
+                      {variant}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Storage Capacity Selection (Smartphones & Tablets Only) */}
+          {['Smartphones', 'Tablets', 'iPhones', 'iPads'].includes(product.category?.name || '') &&
+            product.features?.storage &&
+            Array.isArray(product.features.storage) &&
+            product.features.storage.length > 0 && (
             <div className="mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-200/80">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-extrabold text-gray-900 uppercase tracking-wider">

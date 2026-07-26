@@ -37,9 +37,9 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/60 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+      <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-3xl border-b border-white/60 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
         {/* Top Announcement Bar */}
-        <div className="bg-red-600/90 backdrop-blur-md text-white text-xs py-1.5 px-4 font-medium flex items-center justify-between">
+        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 backdrop-blur-md text-white text-xs py-1.5 px-4 font-medium flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 fill-white drop-shadow-sm" viewBox="0 0 384 512">
@@ -74,7 +74,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsMenuOpen(true)}
-              className="p-2 text-gray-700 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 text-gray-700 dark:text-gray-200 hover:text-red-600 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors"
               title="Open Menu"
             >
               <Menu size={24} />
@@ -86,13 +86,13 @@ export default function Header() {
                 alt="Joe Rich Phones Logo" 
                 width={40} 
                 height={40} 
-                className="object-contain rounded-lg"
+                className="object-contain rounded-xl shadow-xs"
               />
               <span className="font-[family-name:var(--font-outfit)] text-2xl sm:text-3xl flex items-center gap-2">
                 <span className="font-black tracking-tighter bg-gradient-to-r from-gray-950 via-red-600 to-red-500 bg-clip-text text-transparent">
                   Joerich
                 </span>
-                <span className="font-bold tracking-[0.18em] text-red-600 text-xs sm:text-sm uppercase bg-red-50/90 px-2 py-0.5 rounded-md border border-red-200/80 shadow-2xs">
+                <span className="font-bold tracking-[0.18em] text-red-600 text-xs sm:text-sm uppercase bg-red-50/90 dark:bg-red-950/50 px-2 py-0.5 rounded-md border border-red-200/80 dark:border-red-900/80 shadow-2xs">
                   PHONES
                 </span>
               </span>
@@ -101,11 +101,11 @@ export default function Header() {
 
           {/* Search Bar */}
           <div className="flex-1 max-w-md hidden md:flex items-center relative">
-            <Search className="absolute left-3 text-gray-400" size={18} />
+            <Search className="absolute left-3.5 text-gray-400" size={18} />
             <input
               type="text"
               placeholder="Search smartphones, watches, accessories..."
-              className="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+              className="w-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-full py-2.5 pl-10 pr-4 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-500/80 transition-all shadow-inner"
             />
           </div>
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { Star, Heart } from 'lucide-react';
+import { Star, Heart, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
 import { getWishlist, toggleWishlist } from '@/lib/wishlist';
 
 interface Category {
@@ -18,10 +18,12 @@ interface Product {
   price: number;
   stockQuantity: number;
   images: string[];
+  condition: string;
   features?: any;
   category: Category;
   averageRating?: number;
   reviewCount?: number;
+  createdAt?: string;
 }
 
 function getProductImage(product: Product): string {
@@ -46,6 +48,11 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const { addToCart } = useCart();
+
+  // Sorting & Filtering state
+  const [sortOption, setSortOption] = useState<string>('newest');
+  const [conditionFilter, setConditionFilter] = useState<string>(condition || 'ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     setWishlist(getWishlist());
@@ -73,115 +80,247 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
     fetchProducts();
   }, [condition]);
 
-  const filteredProducts = selectedCategory
-    ? products.filter((p) => p.category?.name.toLowerCase() === selectedCategory.toLowerCase())
-    : products;
+  // Compute filtered & sorted product list
+  const processedProducts = useMemo(() => {
+    let result = [...products];
+
+    // 1. Category Filter
+    if (selectedCategory) {
+      result = result.filter((p) => p.category?.name.toLowerCase() === selectedCategory.toLowerCase());
+    }
+
+    // 2. Condition Filter
+    if (conditionFilter !== 'ALL') {
+      result = result.filter((p) => p.condition === conditionFilter);
+    }
+
+    // 3. Search Query Filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          (p.category?.name || '').toLowerCase().includes(q)
+      );
+    }
+
+    // 4. Sorting logic
+    switch (sortOption) {
+      case 'price_asc':
+        result.sort((a, b) => Number(a.price) - Number(b.price));
+        break;
+      case 'price_desc':
+        result.sort((a, b) => Number(b.price) - Number(a.price));
+        break;
+      case 'name_asc':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'newest':
+      default:
+        if (a => a.createdAt) {
+          result.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        }
+        break;
+    }
+
+    return result;
+  }, [products, selectedCategory, conditionFilter, searchQuery, sortOption]);
 
   if (loading) {
-    return <div className="text-center py-20 text-gray-500">Loading products...</div>;
-  }
-
-  if (filteredProducts.length === 0) {
     return (
-      <div className="text-center py-20 text-gray-500">
-        No products found in {selectedCategory || 'store'}.
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center text-sm font-semibold text-gray-500">
+        Loading products...
       </div>
     );
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProducts.map((product) => (
-          <div 
-            key={product.id} 
-            className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative"
-          >
-            <Link href={`/products/${product.id}`} className="block flex-grow relative">
-              <div className="h-52 w-full overflow-hidden bg-white/40 dark:bg-slate-800/40 backdrop-blur-md flex items-center justify-center relative">
-                <span className={`absolute top-3 left-3 z-10 text-[10px] font-black px-2.5 py-0.5 rounded-full backdrop-blur-xl border shadow-2xs ${
-                  product.condition === 'USED'
-                    ? 'bg-amber-500/90 text-white border-amber-300'
-                    : 'bg-emerald-600/90 text-white border-emerald-400'
-                }`}>
-                  {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
-                </span>
+    <section className="max-w-7xl mx-auto px-4 py-4 space-y-6">
+      
+      {/* Customer Filter & Sorting Toolbar */}
+      <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-3.5 sm:p-4 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        {/* Search Input */}
+        <div className="relative w-full md:w-72">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search devices..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-xs font-semibold rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-gray-200/80 dark:border-gray-700/80 focus:border-red-500 outline-none transition text-gray-800 dark:text-gray-200"
+          />
+        </div>
 
-                {/* Hover Color Pill Overlay (Floating Under Phone Image) */}
-                {product.features?.colors && Array.isArray(product.features.colors) && product.features.colors.length > 0 && (
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none z-20">
-                    <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl px-3 py-1 rounded-full shadow-lg border border-white/80 dark:border-white/10 flex items-center gap-1.5 whitespace-nowrap">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mr-0.5">Colors:</span>
-                      {product.features.colors.slice(0, 4).map((c: any, idx: number) => (
-                        <span
-                          key={idx}
-                          className="w-3 h-3 rounded-full border border-black/10 shadow-2xs inline-block"
-                          style={{ backgroundColor: c.hex }}
-                          title={c.name}
-                        />
-                      ))}
-                      {product.features.colors.length > 4 && (
-                        <span className="text-[10px] font-bold text-gray-400">+{product.features.colors.length - 4}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleWishlist(product.id);
-                  }}
-                  className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-xs border border-white/80 dark:border-white/10 hover:bg-white transition active:scale-90"
-                  title="Wishlist"
-                >
-                  <Heart
-                    size={16}
-                    className={wishlist.includes(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-500 hover:text-red-500'}
-                  />
-                </button>
-                <img
-                  src={getProductImage(product)}
-                  alt={product.name}
-                  className="w-full h-full object-contain p-4 group-hover:scale-108 transition-transform duration-500 ease-out"
-                />
-              </div>
-              <div className="px-5 pt-4 flex flex-col">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] text-red-600 font-extrabold uppercase tracking-wider bg-red-50/80 dark:bg-red-950/40 px-2.5 py-0.5 rounded-full border border-red-200/60 dark:border-red-900/60">
-                    {product.category?.name}
-                  </span>
-                  <div className="flex items-center gap-1 text-[11px] font-extrabold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200/60 dark:border-amber-900/60">
-                    <Star size={11} className="fill-amber-400 text-amber-400" />
-                    <span>{product.averageRating || 5.0}</span>
-                    {product.reviewCount && product.reviewCount > 0 ? (
-                      <span className="text-gray-400 font-normal">({product.reviewCount})</span>
-                    ) : null}
-                  </div>
-                </div>
-                <h3 className="font-extrabold text-base text-gray-900 dark:text-white line-clamp-1 group-hover:text-red-600 transition-colors">{product.name}</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 line-clamp-2 leading-relaxed">{product.description}</p>
-              </div>
-            </Link>
-            
-            <div className="p-5 flex items-center justify-between mt-auto border-t border-gray-100/60 dark:border-slate-800/60">
-              <span className="text-xl font-black text-gray-900 dark:text-white tracking-tight">
-                GH₵{Number(product.price).toLocaleString()}
-              </span>
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart(product);
-                }}
-                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white px-4 py-2 rounded-2xl text-xs font-black transition-all shadow-md shadow-red-600/25 active:scale-95"
+        {/* Condition Filter Pills & Sort Selector */}
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full md:w-auto">
+          
+          {/* Condition Filter Pills (only show if not pre-filtered by page condition) */}
+          {!condition && (
+            <div className="flex items-center gap-1 bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-2xl border border-gray-200/60 dark:border-gray-700/60">
+              <button
+                onClick={() => setConditionFilter('ALL')}
+                className={`px-3 py-1 text-[11px] font-extrabold rounded-xl transition-all ${
+                  conditionFilter === 'ALL'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                }`}
               >
-                Add to Cart
+                All
+              </button>
+              <button
+                onClick={() => setConditionFilter('NEW')}
+                className={`px-3 py-1 text-[11px] font-extrabold rounded-xl transition-all ${
+                  conditionFilter === 'NEW'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-emerald-600'
+                }`}
+              >
+                Brand New
+              </button>
+              <button
+                onClick={() => setConditionFilter('USED')}
+                className={`px-3 py-1 text-[11px] font-extrabold rounded-xl transition-all ${
+                  conditionFilter === 'USED'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-amber-600'
+                }`}
+              >
+                Home Used
               </button>
             </div>
+          )}
+
+          {/* Sort Dropdown */}
+          <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-800/80 px-3 py-1.5 rounded-2xl border border-gray-200/80 dark:border-gray-700/80">
+            <ArrowUpDown size={14} className="text-red-500" />
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="bg-transparent text-xs font-bold text-gray-700 dark:text-gray-200 outline-none cursor-pointer"
+            >
+              <option value="newest">Sort: Newest</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="name_asc">Name: A - Z</option>
+            </select>
           </div>
-        ))}
+        </div>
       </div>
+
+      {/* No Products Found Alert */}
+      {processedProducts.length === 0 ? (
+        <div className="text-center py-16 bg-white/40 dark:bg-slate-900/40 rounded-3xl border border-dashed border-gray-300 dark:border-gray-800 space-y-2">
+          <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-slate-800 text-gray-400 flex items-center justify-center mx-auto">
+            <SlidersHorizontal size={22} />
+          </div>
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">No matching products found</h3>
+          <p className="text-xs text-gray-500">Try adjusting your search keywords or filter selection.</p>
+        </div>
+      ) : (
+        /* Product Cards Grid */
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {processedProducts.map((product) => (
+            <div 
+              key={product.id} 
+              className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
+            >
+              <Link href={`/products/${product.id}`} className="block flex-grow relative">
+                <div className="h-48 sm:h-52 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-3">
+                  <span className={`absolute top-3 left-3 z-10 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border shadow-2xs ${
+                    product.condition === 'USED'
+                      ? 'bg-amber-500 text-white border-amber-600'
+                      : 'bg-emerald-600 text-white border-emerald-700'
+                  }`}>
+                    {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
+                  </span>
+
+                  {/* Hover Color Pill Overlay (Floating Under Phone Image) */}
+                  {product.features?.colors && Array.isArray(product.features.colors) && product.features.colors.length > 0 && (
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none z-20">
+                      <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl px-3 py-1 rounded-full shadow-md border border-gray-200 dark:border-white/10 flex items-center gap-1.5 whitespace-nowrap">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mr-0.5">Colors:</span>
+                        {product.features.colors.slice(0, 4).map((c: any, idx: number) => (
+                          <span
+                            key={idx}
+                            className="w-3 h-3 rounded-full border border-black/10 shadow-2xs inline-block"
+                            style={{ backgroundColor: c.hex }}
+                            title={c.name}
+                          />
+                        ))}
+                        {product.features.colors.length > 4 && (
+                          <span className="text-[10px] font-bold text-gray-400">+{product.features.colors.length - 4}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const updated = toggleWishlist(product.id);
+                      setWishlist(updated);
+                    }}
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-slate-900/80 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-red-600 transition shadow-2xs"
+                  >
+                    <Heart
+                      size={15}
+                      className={wishlist.includes(product.id) ? 'fill-red-600 text-red-600' : ''}
+                    />
+                  </button>
+
+                  <img
+                    src={getProductImage(product)}
+                    alt={product.name}
+                    className="h-40 sm:h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-108 group-hover:-translate-y-1"
+                  />
+                </div>
+              </Link>
+
+              {/* Product Info - Minimalist & High Readability */}
+              <div className="p-4 sm:p-5 flex flex-col justify-between flex-grow space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-wider bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/50">
+                      {product.category?.name || 'Smartphones'}
+                    </span>
+                  </div>
+
+                  <Link href={`/products/${product.id}`} className="block mt-1.5">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-red-600 transition-colors">
+                      {product.name}
+                    </h3>
+                  </Link>
+                </div>
+
+                <div className="pt-2.5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-base font-extrabold text-gray-900 dark:text-white">
+                      GH₵{Number(product.price).toLocaleString()}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      addToCart({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: getProductImage(product),
+                        quantity: 1,
+                      });
+                    }}
+                    className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/20 transition active:scale-95 flex items-center gap-1.5"
+                  >
+                    <span>Add to Cart</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

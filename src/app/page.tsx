@@ -19,50 +19,50 @@ export default function Home() {
           onSelectCategory={setSelectedCategory}
         />
 
-        {/* Lightweight Ultra-Fast Apple Glass Hero Banner */}
-        <div className="w-full max-w-7xl mx-auto my-4 px-4">
-          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-gray-900 to-red-950 px-6 py-4 sm:px-8 sm:py-5 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.15)] flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Compact Stretched Apple Glass Hero Banner */}
+        <div className="w-full max-w-7xl mx-auto my-2 px-4">
+          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-slate-900 via-gray-900 to-red-950 px-5 py-3 sm:px-8 sm:py-3.5 border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.12)] flex flex-col sm:flex-row items-center justify-between gap-3">
 
             {/* Ambient Background Glowing Spheres */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/20 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-rose-600/15 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/20 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-rose-600/15 rounded-full blur-[80px] pointer-events-none" />
 
-            <div className="relative z-10 max-w-xl space-y-3 text-center sm:text-left">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full text-[11px] font-bold text-red-400 uppercase tracking-wider">
-                <Sparkles size={13} /> Genuine Products Guaranteed
+            <div className="relative z-10 max-w-xl space-y-1.5 text-center sm:text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-red-500/20 border border-red-500/30 rounded-full text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                <Sparkles size={11} /> Genuine Products Guaranteed
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-lg sm:text-2xl font-extrabold text-white tracking-tight leading-snug">
                 Experience Next-Gen Technology at <span className="text-red-500">Joerich Phones</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed">
-                Your trusted store in Koforidua for authentic Apple iPhones, Tablets, Watches & Premium Accessories.
+              <p className="text-[11px] sm:text-xs text-gray-300 font-medium leading-normal">
+                Your trusted store in Koforidua for authentic Apple iPhones, Tablets, Watches & Accessories.
               </p>
 
-              <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+              <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <Link
                   href="/products"
-                  className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-red-600/30 transition-all flex items-center gap-2 active:scale-95"
+                  className="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-extrabold text-[11px] rounded-xl shadow-md shadow-red-600/20 transition-all flex items-center gap-1.5 active:scale-95"
                 >
-                  <span>Explore All Products</span>
-                  <ArrowRight size={15} />
+                  <span>Explore All</span>
+                  <ArrowRight size={13} />
                 </Link>
 
-                <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-gray-400 bg-white/10 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10">
-                  <MapPin size={13} className="text-red-400" />
+                <div className="inline-flex items-center gap-1 text-[10px] font-semibold text-gray-400 bg-white/10 backdrop-blur-md px-2.5 py-1.5 rounded-xl border border-white/10">
+                  <MapPin size={11} className="text-red-400" />
                   <span>Koforidua, Accra Station</span>
                 </div>
               </div>
             </div>
 
             {/* Showcase Visual Badge */}
-            <div className="relative z-10 hidden md:flex flex-col items-center justify-center bg-white/10 backdrop-blur-2xl p-5 rounded-3xl border border-white/15 shadow-xl text-center space-y-2 shrink-0 w-64">
-              <div className="w-12 h-12 rounded-2xl bg-red-600/20 text-red-400 flex items-center justify-center">
-                <ShieldCheck size={26} />
+            <div className="relative z-10 hidden md:flex flex-col items-center justify-center bg-white/10 backdrop-blur-2xl p-3 rounded-2xl border border-white/15 shadow-md text-center space-y-1 shrink-0 w-48">
+              <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center">
+                <ShieldCheck size={18} />
               </div>
-              <h4 className="text-sm font-bold text-white">Official Warranty</h4>
-              <p className="text-[11px] text-gray-300 font-medium">100% Original Products with full store warranty support.</p>
+              <h4 className="text-xs font-bold text-white">Official Warranty</h4>
+              <p className="text-[10px] text-gray-300 font-medium">100% Original Products with store support.</p>
             </div>
           </div>
         </div>

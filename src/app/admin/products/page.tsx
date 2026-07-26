@@ -117,6 +117,26 @@ export default function AdminProductsPage() {
     }
   };
 
+  const [customImageUrl, setCustomImageUrl] = useState('');
+
+  const handleAddCustomUrl = () => {
+    if (!customImageUrl.trim()) return;
+    setImageUrls((prev) => [...prev, customImageUrl.trim()]);
+    setCustomImageUrl('');
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImageUrls((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const handleSetMainImage = (indexToMakeMain: number) => {
+    setImageUrls((prev) => {
+      const newArr = [...prev];
+      const [selected] = newArr.splice(indexToMakeMain, 1);
+      return [selected, ...newArr];
+    });
+  };
+
   const resetForm = () => {
     setName('');
     setCategoryName(selectedCategoryTab !== 'ALL' ? selectedCategoryTab : 'Smartphones');
@@ -125,6 +145,7 @@ export default function AdminProductsPage() {
     setDescription('');
     setCondition('NEW');
     setImageUrls([]);
+    setCustomImageUrl('');
     setSelectedColors([]);
     setSelectedStorage([]);
     setSelectedVariants([]);
@@ -701,16 +722,24 @@ export default function AdminProductsPage() {
                     )}
                   </div>
 
-                  {/* Image File Upload Integration */}
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
-                      Product Images
-                    </label>
-                    <label className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition">
-                      <Upload className="w-6 h-6 text-gray-400 mb-1" />
-                      <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
-                        {uploadingImage ? 'Uploading...' : 'Click to Upload Product Image(s)'}
+                  {/* Product Photos Manager (Upload, Remove & Order Photos) */}
+                  <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-extrabold text-gray-800 dark:text-gray-200 uppercase">
+                        Product Photos ({imageUrls.length})
+                      </label>
+                      <span className="text-[10px] text-gray-500 font-semibold">
+                        Upload, remove or reorder photos
                       </span>
+                    </div>
+
+                    {/* File Upload Area */}
+                    <label className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition bg-white dark:bg-gray-900">
+                      <Upload className="w-6 h-6 text-red-500 mb-1" />
+                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                        {uploadingImage ? 'Uploading...' : 'Click to Upload Product Photo(s)'}
+                      </span>
+                      <span className="text-[10px] text-gray-400 mt-0.5">PNG, JPG, WEBP formats supported</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -721,13 +750,73 @@ export default function AdminProductsPage() {
                       />
                     </label>
 
+                    {/* Add Photo via URL */}
+                    <div className="flex gap-2 pt-1">
+                      <input
+                        type="url"
+                        placeholder="Or paste photo image URL..."
+                        value={customImageUrl}
+                        onChange={(e) => setCustomImageUrl(e.target.value)}
+                        className="flex-1 px-3 py-2 text-xs rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:border-red-600 outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddCustomUrl}
+                        className="px-3 py-2 bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-xs font-bold rounded-xl hover:bg-gray-800 transition"
+                      >
+                        Add URL
+                      </button>
+                    </div>
+
+                    {/* Uploaded Gallery Manager */}
                     {imageUrls.length > 0 && (
-                      <div className="flex gap-2 mt-3 overflow-x-auto">
-                        {imageUrls.map((url, idx) => (
-                          <div key={idx} className="w-14 h-14 rounded-xl border p-1 bg-gray-50 relative shrink-0">
-                            <Image src={url} alt="Uploaded preview" width={50} height={50} className="object-contain" />
-                          </div>
-                        ))}
+                      <div className="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <span className="block text-[11px] font-bold text-gray-500 uppercase">
+                          Uploaded Gallery (First photo is Main Cover):
+                        </span>
+
+                        <div className="grid grid-cols-3 gap-2.5 max-h-48 overflow-y-auto pr-1">
+                          {imageUrls.map((url, idx) => (
+                            <div
+                              key={idx}
+                              className={`relative rounded-xl border p-1 bg-white dark:bg-gray-900 group transition-all ${
+                                idx === 0 ? 'border-red-500 ring-2 ring-red-500/20' : 'border-gray-200 dark:border-gray-700'
+                              }`}
+                            >
+                              <div className="h-16 w-full flex items-center justify-center overflow-hidden rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <Image src={url} alt={`Photo ${idx + 1}`} width={60} height={60} className="object-contain" />
+                              </div>
+
+                              {/* Main Cover Badge */}
+                              {idx === 0 && (
+                                <span className="absolute top-1 left-1 bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
+                                  Main
+                                </span>
+                              )}
+
+                              {/* Delete/Remove Photo Button */}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(idx)}
+                                title="Remove this photo"
+                                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-md transition active:scale-95 z-10"
+                              >
+                                ✕
+                              </button>
+
+                              {/* Set as Main Action */}
+                              {idx !== 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetMainImage(idx)}
+                                  className="w-full mt-1 py-0.5 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-950/40 text-gray-600 dark:text-gray-300 hover:text-red-600 text-[10px] font-extrabold rounded-md transition text-center"
+                                >
+                                  Set Main
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>

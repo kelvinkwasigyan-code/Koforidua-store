@@ -335,57 +335,72 @@ export default function ProductsPage() {
             ) : (
               <div>
                 <p className="text-xs font-bold text-gray-500 mb-4">{filteredProducts.length} product{filteredProducts.length !== 1 && 's'} showing</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="group bg-white rounded-3xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                      className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
                     >
-                      <Link href={`/products/${product.id}`} className="relative aspect-square overflow-hidden bg-gray-50 block">
-                        <Image
-                          src={getProductImage(product)}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                        />
-                        {product.condition === 'NEW' && (
-                          <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-wider">
-                            Brand New
-                          </div>
-                        )}
-                        {product.stockQuantity === 0 && (
-                          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
-                            <span className="bg-black text-white text-xs font-bold px-4 py-1.5 rounded-full">
-                              Out of Stock
-                            </span>
-                          </div>
-                        )}
+                      <Link href={`/products/${product.id}`} className="block flex-grow relative">
+                        <div className="h-40 sm:h-52 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-2">
+                          <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${
+                            product.condition === 'USED'
+                              ? 'bg-amber-500 text-white border-amber-600'
+                              : 'bg-emerald-600 text-white border-emerald-700'
+                          }`}>
+                            {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
+                          </span>
+
+                          <img
+                            src={getProductImage(product)}
+                            alt={product.name}
+                            className="h-32 sm:h-44 w-auto object-contain transition-transform duration-500 group-hover:scale-108 group-hover:-translate-y-1"
+                          />
+
+                          {product.stockQuantity === 0 && (
+                            <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs flex items-center justify-center">
+                              <span className="bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                                Out of Stock
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </Link>
 
-                      <div className="p-4 sm:p-5 flex flex-col flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">
-                            {product.category?.name}
-                          </span>
-                          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">
-                            <Star size={11} className="fill-amber-400 text-amber-400" />
-                            <span>{product.averageRating || 5.0}</span>
-                            {product.reviewCount && product.reviewCount > 0 ? (
-                              <span className="text-gray-400 font-normal">({product.reviewCount})</span>
-                            ) : null}
+                      <div className="p-3.5 sm:p-5 flex flex-col justify-between flex-grow space-y-2.5">
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[9px] sm:text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-wider bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/50">
+                              {product.category?.name || 'Smartphones'}
+                            </span>
                           </div>
-                        </div>
-                        <Link href={`/products/${product.id}`}>
-                          <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-tight mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
-                            {product.name}
-                          </h3>
-                        </Link>
 
-                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-100">
-                          <span className="font-black text-lg text-gray-900">
-                            GH₵{product.price.toLocaleString()}
+                          <Link href={`/products/${product.id}`} className="block mt-1">
+                            <h3 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-red-600 transition-colors">
+                              {product.name}
+                            </h3>
+                          </Link>
+                        </div>
+
+                        <div className="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-1">
+                          <span className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white">
+                            GH₵{Number(product.price).toLocaleString()}
                           </span>
+
+                          <button
+                            onClick={() => {
+                              addToCart({
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                image: getProductImage(product),
+                                quantity: 1,
+                              });
+                            }}
+                            className="px-2.5 sm:px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] sm:text-xs rounded-xl shadow-md shadow-red-600/20 transition active:scale-95 shrink-0"
+                          >
+                            Add to Cart
+                          </button>
                         </div>
                       </div>
                     </div>

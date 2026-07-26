@@ -43,7 +43,11 @@ export default function Footer() {
             </div>
             <div>
               <h4 className="font-bold text-white text-xs">24/7 Customer Support</h4>
-              <p className="text-[11px] text-gray-400">Call / WhatsApp: 0547654736</p>
+              <p className="text-[11px] text-gray-400">
+                <a href="tel:0547654736" className="text-white font-bold hover:text-red-400 underline transition">Call: 0547654736</a>
+                <span className="mx-1.5 text-gray-600">|</span>
+                <a href="https://wa.me/233547654736" target="_blank" rel="noreferrer" className="text-emerald-400 font-bold hover:text-emerald-300 underline transition">WhatsApp</a>
+              </p>
             </div>
           </div>
         </div>
@@ -85,11 +89,11 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone size={14} className="text-red-500 shrink-0" />
-                <span>0547654736</span>
+                <a href="tel:0547654736" className="text-white hover:text-red-400 font-bold underline transition">0547654736</a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail size={14} className="text-red-500 shrink-0" />
-                <span>support@joerichstore.com</span>
+                <a href="mailto:support@joerichstore.com" className="hover:text-white transition-colors">support@joerichstore.com</a>
               </div>
             </div>
           </div>

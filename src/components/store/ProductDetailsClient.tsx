@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useRecordView } from '@/hooks/useRecordView';
+import WishlistButton from '@/components/store/WishlistButton';
 import { ShoppingBag, CheckCircle2, ShieldCheck, Truck, Minus, Plus, Star, MessageSquare, BadgeCheck, X, AlertCircle } from 'lucide-react';
 
 interface ProductDetailsClientProps {
@@ -379,6 +380,10 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
               <ShoppingBag size={22} />
               <span>{isAdding ? 'Adding...' : 'Add to Cart'}</span>
             </button>
+
+            <div className="flex items-center justify-center h-14 w-14 shrink-0 border-2 border-gray-200 rounded-2xl bg-white shadow-xs">
+              <WishlistButton productId={product.id} />
+            </div>
           </div>
 
           {/* Trust Badges */}

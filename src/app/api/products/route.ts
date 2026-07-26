@@ -16,17 +16,34 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        const products = await prisma.product.findMany({
+        const products = await (prisma as any).product.findMany({
             where: whereClause,
             include: {
                 category: true,
+                reviews: {
+                    select: { rating: true }
+                }
             },
             orderBy: {
                 createdAt: 'desc',
             },
         });
 
-        return NextResponse.json(products);
+        const formattedProducts = products.map((p: any) => {
+            const reviews = p.reviews || [];
+            const reviewCount = reviews.length;
+            const averageRating = reviewCount > 0
+                ? Number((reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviewCount).toFixed(1))
+                : 5.0;
+
+            return {
+                ...p,
+                averageRating,
+                reviewCount,
+            };
+        });
+
+        return NextResponse.json(formattedProducts);
     } catch (error) {
         console.error('Failed to fetch products:', error);
         return NextResponse.json(

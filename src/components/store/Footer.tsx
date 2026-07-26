@@ -1,7 +1,16 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldCheck, Truck, Headphones, MapPin, Phone, Mail } from 'lucide-react';
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="bg-gray-900 text-gray-300 py-8 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 space-y-6">
@@ -43,7 +52,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-2">
           {/* About */}
           <div>
-            <h3 className="font-bold text-base text-white mb-2">Joe Rich Phones</h3>
+            <h3 className="font-[family-name:var(--font-outfit)] text-xl text-white mb-2 tracking-tight flex items-center gap-2">
+              <span className="font-black tracking-tighter text-white">Joerich</span>
+              <span className="font-bold tracking-[0.18em] text-red-500 text-xs uppercase bg-red-950/40 px-2 py-0.5 rounded-md border border-red-500/30">
+                PHONES
+              </span>
+            </h3>
             <p className="text-xs text-gray-400 leading-relaxed">
               Your trusted store in Ghana for authentic smartphones, smartwatches, and original accessories.
             </p>

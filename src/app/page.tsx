@@ -19,15 +19,15 @@ export default function Home() {
         />
 
         {/* Promo Video Banner */}
-        <div className="w-full max-w-4xl mx-auto my-6 px-4">
-          <div className="rounded-3xl overflow-hidden shadow-xl border border-gray-200/60 bg-black">
+        <div className="w-full max-w-7xl mx-auto my-6 px-4">
+          <div className="relative rounded-3xl overflow-hidden shadow-lg border border-gray-200/80 bg-black h-56 sm:h-72 md:h-80 w-full flex items-center justify-center">
             <video 
               src="/Promo-video.mp4" 
               autoPlay 
               loop 
               muted 
               playsInline
-              className="w-full h-auto object-cover max-h-[450px]"
+              className="w-full h-full object-cover object-center"
             />
           </div>
         </div>

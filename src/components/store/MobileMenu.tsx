@@ -26,8 +26,13 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         {/* Top Header & Close Button */}
         <div>
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="font-bold text-lg text-red-600 tracking-tight">
-              Joe Rich Phones
+            <span className="font-[family-name:var(--font-outfit)] text-xl flex items-center gap-1.5">
+              <span className="font-black tracking-tighter bg-gradient-to-r from-gray-950 via-red-600 to-red-500 bg-clip-text text-transparent">
+                Joerich
+              </span>
+              <span className="font-bold tracking-[0.18em] text-red-600 text-xs uppercase bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200/80">
+                PHONES
+              </span>
             </span>
             <button 
               onClick={onClose}
@@ -49,15 +54,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 {link.name}
               </Link>
             ))}
-            
-            {/* Settings Link */}
+
             <Link 
-              href="/settings" 
+              href="/wishlist" 
               onClick={onClose}
               className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors flex items-center gap-2"
             >
-              <Settings size={18} className="text-gray-500" />
-              <span>Settings</span>
+              <span className="text-red-500 font-bold">❤️</span>
+              <span>My Wishlist</span>
             </Link>
           </nav>
         </div>

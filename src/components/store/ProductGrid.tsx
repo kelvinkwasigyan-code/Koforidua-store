@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { Star, Heart } from 'lucide-react';
+import { getWishlist, toggleWishlist } from '@/lib/wishlist';
 
 interface Category {
   id: string;
@@ -18,12 +20,39 @@ interface Product {
   images: string[];
   features?: any;
   category: Category;
+  averageRating?: number;
+  reviewCount?: number;
+}
+
+function getProductImage(product: Product): string {
+  if (product.images && product.images.length > 0 && product.images[0] && product.images[0] !== '/file.svg' && product.images[0] !== '/placeholder.png') {
+    return product.images[0];
+  }
+  const cat = (product.category?.name || '').toLowerCase();
+  const name = (product.name || '').toLowerCase();
+  
+  if (name.includes('16 pro') || name.includes('16pro')) return '/showcase_iphone16pro.png';
+  if (name.includes('ultra 2') || name.includes('apple watch')) return '/showcase_smartwatch.png';
+  if (cat.includes('phone') || cat.includes('iphone') || cat.includes('smartphone') || name.includes('iphone') || name.includes('galaxy') || name.includes('pixel')) return '/iphones.PNG';
+  if (cat.includes('tablet') || cat.includes('ipad') || name.includes('ipad')) return '/tablet.PNG';
+  if (cat.includes('watch') || name.includes('watch')) return '/Watches.png';
+  if (cat.includes('speaker') || name.includes('speaker') || name.includes('airpods') || name.includes('audio')) return '/speaker.PNG';
+  if (cat.includes('fragrance') || cat.includes('scalp') || cat.includes('care')) return '/fragrance.PNG';
+  return '/Covers.png';
 }
 
 export default function ProductGrid({ selectedCategory, condition }: { selectedCategory?: string | null, condition?: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    setWishlist(getWishlist());
+    const handleWishlistUpdate = () => setWishlist(getWishlist());
+    window.addEventListener('wishlistUpdated', handleWishlistUpdate);
+    return () => window.removeEventListener('wishlistUpdated', handleWishlistUpdate);
+  }, []);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -90,16 +119,39 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
               )}
 
               <div className="h-48 w-full overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist(product.id);
+                  }}
+                  className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-gray-200/60 hover:bg-white transition active:scale-90"
+                  title="Wishlist"
+                >
+                  <Heart
+                    size={16}
+                    className={wishlist.includes(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-500 hover:text-red-500'}
+                  />
+                </button>
                 <img
-                  src={product.images[0] || '/file.svg'}
+                  src={getProductImage(product)}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div className="px-4 pt-4 flex flex-col">
-                <span className="text-xs text-red-600 font-semibold uppercase tracking-wider mb-1">
-                  {product.category?.name}
-                </span>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-red-600 font-semibold uppercase tracking-wider">
+                    {product.category?.name}
+                  </span>
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">
+                    <Star size={11} className="fill-amber-400 text-amber-400" />
+                    <span>{product.averageRating || 5.0}</span>
+                    {product.reviewCount && product.reviewCount > 0 ? (
+                      <span className="text-gray-400 font-normal">({product.reviewCount})</span>
+                    ) : null}
+                  </div>
+                </div>
                 <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">{product.name}</h3>
                 <p className="text-gray-500 text-sm mt-1 line-clamp-2">{product.description}</p>
               </div>

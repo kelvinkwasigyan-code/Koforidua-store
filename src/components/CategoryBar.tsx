@@ -13,6 +13,7 @@ const categories = [
   { name: 'Watches', image: '/Watches.png' },
   { name: 'Speakers', image: '/speaker.PNG' },
   { name: 'Fragrance & Scalp Care', image: '/fragrance.PNG' },
+  { name: 'Accessories', image: '/Covers.png' },
 ];
 
 export default function CategoryBar({
@@ -42,9 +43,8 @@ export default function CategoryBar({
                 className="snap-start shrink-0 group flex flex-col items-center gap-4 transition-all duration-300 active:scale-95"
               >
                 <div
-                  className={`relative flex h-36 w-36 md:h-[220px] md:w-[220px] items-center justify-center transition-all duration-500 ${
-                    isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:-translate-y-2 group-hover:drop-shadow-xl'
-                  }`}
+                  className={`relative flex h-36 w-36 md:h-[220px] md:w-[220px] items-center justify-center transition-all duration-500 ${isSelected ? 'scale-110 drop-shadow-md' : 'group-hover:scale-110 group-hover:-translate-y-2 group-hover:drop-shadow-xl'
+                    }`}
                 >
                   <img
                     src={cat.image}
@@ -53,9 +53,8 @@ export default function CategoryBar({
                   />
                 </div>
                 <span
-                  className={`text-center text-[13px] md:text-base font-bold tracking-tight transition-colors mt-1 ${
-                    isSelected ? 'text-red-600' : 'text-gray-600 group-hover:text-gray-900'
-                  }`}
+                  className={`text-center text-[13px] md:text-base font-bold tracking-tight transition-colors mt-1 ${isSelected ? 'text-red-600' : 'text-gray-600 group-hover:text-gray-900'
+                    }`}
                 >
                   {cat.name}
                 </span>

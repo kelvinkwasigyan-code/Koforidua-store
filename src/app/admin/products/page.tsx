@@ -171,34 +171,12 @@ export default function AdminProductsPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={async () => {
-              await fetch('/api/admin/restore-defaults');
-              fetchProducts();
-            }}
-            className="px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold text-sm rounded-2xl transition active:scale-95 flex items-center justify-center gap-2"
-          >
-            <RotateCcw size={16} /> Restore Defaults
-          </button>
-          <button
-            onClick={async () => {
-              if (confirm('Delete all default sample products?')) {
-                await fetch('/api/admin/clean-defaults');
-                fetchProducts();
-              }
-            }}
-            className="px-4 py-3 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-bold text-sm rounded-2xl transition active:scale-95 flex items-center justify-center gap-2"
-          >
-            <Trash2 size={16} /> Clear Defaults
-          </button>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-red-600/30 transition active:scale-95 flex items-center justify-center gap-2"
-          >
-            <Plus size={18} /> Add New Product
-          </button>
-        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-5 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-red-600/30 transition active:scale-95 flex items-center justify-center gap-2 self-start sm:self-auto"
+        >
+          <Plus size={18} /> Add New Product
+        </button>
       </div>
 
       {/* Product Table Card */}

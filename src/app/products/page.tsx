@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
-import { Filter, SlidersHorizontal, ChevronDown, Check, X } from 'lucide-react';
+import { Filter, SlidersHorizontal, ChevronDown, Check, X, Star } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -18,6 +18,25 @@ interface Product {
     name: string;
   };
   createdAt: string;
+  averageRating?: number;
+  reviewCount?: number;
+}
+
+function getProductImage(product: Product): string {
+  if (product.images && product.images.length > 0 && product.images[0] && product.images[0] !== '/file.svg' && product.images[0] !== '/placeholder.png') {
+    return product.images[0];
+  }
+  const cat = (product.category?.name || '').toLowerCase();
+  const name = (product.name || '').toLowerCase();
+  
+  if (name.includes('16 pro') || name.includes('16pro')) return '/showcase_iphone16pro.png';
+  if (name.includes('ultra 2') || name.includes('apple watch')) return '/showcase_smartwatch.png';
+  if (cat.includes('phone') || cat.includes('iphone') || cat.includes('smartphone') || name.includes('iphone') || name.includes('galaxy') || name.includes('pixel')) return '/iphones.PNG';
+  if (cat.includes('tablet') || cat.includes('ipad') || name.includes('ipad')) return '/tablet.PNG';
+  if (cat.includes('watch') || name.includes('watch')) return '/Watches.png';
+  if (cat.includes('speaker') || name.includes('speaker') || name.includes('airpods') || name.includes('audio')) return '/speaker.PNG';
+  if (cat.includes('fragrance') || cat.includes('scalp') || cat.includes('care')) return '/fragrance.PNG';
+  return '/Covers.png';
 }
 
 export default function ProductsPage() {
@@ -322,9 +341,9 @@ export default function ProductsPage() {
                       key={product.id}
                       className="group bg-white rounded-3xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-red-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col"
                     >
-                      <Link href={`/store/${product.id}`} className="relative aspect-square overflow-hidden bg-gray-50 block">
+                      <Link href={`/products/${product.id}`} className="relative aspect-square overflow-hidden bg-gray-50 block">
                         <Image
-                          src={product.images?.[0] || '/file.svg'}
+                          src={getProductImage(product)}
                           alt={product.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -345,10 +364,19 @@ export default function ProductsPage() {
                       </Link>
 
                       <div className="p-4 sm:p-5 flex flex-col flex-1">
-                        <div className="mb-1 text-[10px] font-bold text-red-600 uppercase tracking-wider">
-                          {product.category?.name}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">
+                            {product.category?.name}
+                          </span>
+                          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200/60">
+                            <Star size={11} className="fill-amber-400 text-amber-400" />
+                            <span>{product.averageRating || 5.0}</span>
+                            {product.reviewCount && product.reviewCount > 0 ? (
+                              <span className="text-gray-400 font-normal">({product.reviewCount})</span>
+                            ) : null}
+                          </div>
                         </div>
-                        <Link href={`/store/${product.id}`}>
+                        <Link href={`/products/${product.id}`}>
                           <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-tight mb-2 line-clamp-2 group-hover:text-red-600 transition-colors">
                             {product.name}
                           </h3>

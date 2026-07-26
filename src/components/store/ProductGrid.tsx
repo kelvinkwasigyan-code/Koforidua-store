@@ -77,7 +77,7 @@ function getPhoneReleaseRank(name: string): number {
   return 0;
 }
 
-export default function ProductGrid({ selectedCategory, condition }: { selectedCategory?: string | null, condition?: string }) {
+export default function ProductGrid({ selectedCategory, condition, onlyUploaded }: { selectedCategory?: string | null, condition?: string, onlyUploaded?: boolean }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -259,10 +259,10 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
             return (
               <div
                 key={product.id}
-                className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
+                className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-2xl hover:-translate-y-1.5 hover:border-red-500/30 transition-all duration-300 flex flex-col group relative"
               >
                 <Link href={`/products/${product.id}`} className="block flex-grow relative">
-                  <div className="h-40 sm:h-48 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-2.5">
+                  <div className="h-40 sm:h-48 w-full overflow-hidden bg-gradient-to-b from-gray-100/50 to-transparent dark:from-slate-800/40 flex items-center justify-center relative p-2.5">
                     <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
                       ? 'bg-amber-500 text-white border-amber-600'
                       : 'bg-emerald-600 text-white border-emerald-700'
@@ -345,7 +345,7 @@ export default function ProductGrid({ selectedCategory, condition }: { selectedC
                           quantity: 1,
                         });
                       }}
-                      className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/20 transition active:scale-95 flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 bg-gray-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-md shadow-gray-900/20 transition active:scale-95 flex items-center gap-1.5"
                     >
                       <span>Add to Cart</span>
                     </button>

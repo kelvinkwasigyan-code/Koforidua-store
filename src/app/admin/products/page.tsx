@@ -423,10 +423,10 @@ export default function AdminProductsPage() {
                       <button
                         onClick={() => handleToggleAvailability(product)}
                         title="Click to toggle In Stock / Out of Stock"
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition active:scale-95 border ${
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-black transition active:scale-95 border cursor-pointer ${
                           product.stockQuantity > 0
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800'
-                            : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800'
+                            : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800'
                         }`}
                       >
                         <span className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
@@ -435,6 +435,10 @@ export default function AdminProductsPage() {
                             ? (product.category?.name === 'Smartphones' && product.condition === 'USED' ? `In Stock (${product.stockQuantity})` : 'In Stock') 
                             : 'Out of Stock'}
                         </span>
+                        {/* Toggle Switch Visual */}
+                        <div className={`w-7 h-4 rounded-full p-0.5 transition-colors ${product.stockQuantity > 0 ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                          <div className={`w-3 h-3 rounded-full bg-white shadow-xs transition-transform ${product.stockQuantity > 0 ? 'translate-x-3' : 'translate-x-0'}`} />
+                        </div>
                       </button>
                     </div>
 
@@ -514,10 +518,10 @@ export default function AdminProductsPage() {
                         <button
                           onClick={() => handleToggleAvailability(product)}
                           title="Click to toggle In Stock / Out of Stock"
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
+                          className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black transition cursor-pointer hover:scale-105 active:scale-95 border ${
                             product.stockQuantity > 0
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
-                              : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800'
+                              : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800'
                           }`}
                         >
                           <span className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
@@ -526,6 +530,10 @@ export default function AdminProductsPage() {
                               ? (product.category?.name === 'Smartphones' && product.condition === 'USED' ? `In Stock (${product.stockQuantity})` : 'In Stock') 
                               : 'Out of Stock'}
                           </span>
+                          {/* Toggle Switch Visual */}
+                          <div className={`w-7 h-4 rounded-full p-0.5 transition-colors ${product.stockQuantity > 0 ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                            <div className={`w-3 h-3 rounded-full bg-white shadow-xs transition-transform ${product.stockQuantity > 0 ? 'translate-x-3' : 'translate-x-0'}`} />
+                          </div>
                         </button>
                       </td>
                       <td className="py-4 px-6 text-right space-x-2">
@@ -794,6 +802,33 @@ export default function AdminProductsPage() {
                         onChange={(e) => setPrice(e.target.value)}
                         className="w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 border border-transparent focus:border-red-600 outline-none text-sm font-medium"
                       />
+                    </div>
+
+                    {/* Stock Availability Toggle Switch */}
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">
+                        Stock Availability
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentQty = parseInt(stockQuantity) || 0;
+                          setStockQuantity(currentQty > 0 ? '0' : '10');
+                        }}
+                        className={`w-full py-3 px-4 rounded-2xl border transition-all flex items-center justify-between font-extrabold text-xs cursor-pointer ${
+                          (parseInt(stockQuantity) || 0) > 0
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800'
+                            : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full ${ (parseInt(stockQuantity) || 0) > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-red-500' }`} />
+                          <span>{(parseInt(stockQuantity) || 0) > 0 ? 'In Stock (Available)' : 'Out of Stock (Disabled)'}</span>
+                        </div>
+                        <div className={`w-9 h-5 rounded-full p-0.5 transition-colors ${ (parseInt(stockQuantity) || 0) > 0 ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-gray-700' }`}>
+                          <div className={`w-4 h-4 rounded-full bg-white shadow-md transition-transform ${ (parseInt(stockQuantity) || 0) > 0 ? 'translate-x-4' : 'translate-x-0' }`} />
+                        </div>
+                      </button>
                     </div>
 
                     {categoryName === 'Smartphones' && (

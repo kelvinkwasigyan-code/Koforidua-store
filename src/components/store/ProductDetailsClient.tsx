@@ -191,31 +191,31 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     : [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 lg:py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+    <div className="max-w-7xl mx-auto px-4 py-4 lg:py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16">
         {/* Left Column: Image Gallery */}
-        <div className="flex flex-col gap-4">
-          <div className="w-full aspect-square bg-gray-100 rounded-3xl overflow-hidden flex items-center justify-center p-8 border border-gray-200">
+        <div className="flex flex-col gap-3">
+          <div className="w-full h-56 sm:h-80 lg:aspect-square lg:h-auto max-h-[280px] sm:max-h-[380px] lg:max-h-none bg-gradient-to-b from-gray-100/80 to-gray-50 dark:from-slate-800/50 dark:to-slate-900/50 rounded-3xl overflow-hidden flex items-center justify-center p-4 sm:p-8 border border-gray-200/80 dark:border-white/10 shadow-xs relative">
             <img
               src={activeImage}
               alt={product.name}
-              className="w-full h-full object-contain mix-blend-multiply"
+              className="w-full h-full max-h-[240px] sm:max-h-[340px] lg:max-h-none object-contain mix-blend-multiply transition-transform duration-500 hover:scale-105"
             />
           </div>
 
           {product.images.length > 1 && (
-            <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
+            <div className="flex gap-2.5 sm:gap-4 overflow-x-auto pb-1.5 snap-x scrollbar-none">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`relative w-24 h-24 shrink-0 rounded-2xl overflow-hidden border-2 transition-all ${
+                  className={`relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-2xl overflow-hidden border-2 transition-all ${
                     activeImage === img
                       ? 'border-red-600 shadow-md scale-105'
-                      : 'border-transparent bg-gray-100 hover:border-gray-300'
+                      : 'border-transparent bg-gray-100 dark:bg-slate-800 hover:border-gray-300'
                   }`}
                 >
-                  <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover mix-blend-multiply p-2" />
+                  <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover mix-blend-multiply p-1.5" />
                 </button>
               ))}
             </div>
@@ -247,26 +247,26 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
             )}
           </div>
 
-          <h1 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight leading-tight mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 dark:text-white tracking-tight leading-tight mb-3">
             {product.name}
           </h1>
 
-          <div className="flex items-end gap-4 mb-6">
-            <span className="text-3xl font-bold text-gray-900">
+          <div className="flex items-end gap-3 mb-4">
+            <span className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
               GH₵{Number(product.price).toFixed(2)}
             </span>
             {product.stockQuantity > 0 ? (
-              <span className="flex items-center gap-1.5 text-sm font-semibold text-green-600 mb-1.5">
+              <span className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-emerald-600 mb-1">
                 <CheckCircle2 size={16} /> In Stock
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-sm font-semibold text-red-500 mb-1.5">
+              <span className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-red-500 mb-1">
                 Out of Stock
               </span>
             )}
           </div>
 
-          <p className="text-gray-600 text-base leading-relaxed mb-8">
+          <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed mb-5">
             {product.description || 'No description available for this product.'}
           </p>
 
@@ -423,8 +423,8 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
                 product.stockQuantity <= 0
                   ? 'bg-gray-300 cursor-not-allowed'
                   : isAdding
-                  ? 'bg-red-700 scale-[0.98]'
-                  : 'bg-red-600 hover:bg-red-700 hover:shadow-md hover:-translate-y-0.5 active:scale-95'
+                  ? 'bg-gray-800 scale-[0.98]'
+                  : 'bg-gray-900 hover:bg-black hover:shadow-md hover:-translate-y-0.5 active:scale-95'
               }`}
             >
               <ShoppingBag size={22} />

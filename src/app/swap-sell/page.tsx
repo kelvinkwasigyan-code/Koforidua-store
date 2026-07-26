@@ -117,10 +117,10 @@ ${uploadedUrls.length > 0 ? `\n*Device Images:*\n${uploadedUrls.join('\n')}` : '
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, actionType: 'swap' })}
-                    className={`py-3 px-4 rounded-xl border text-sm font-semibold transition-all ${
+                    className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all backdrop-blur-xl ${
                       formData.actionType === 'swap'
-                        ? 'border-red-600 bg-red-50 text-red-600 shadow-sm'
-                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                        ? 'border-red-500 bg-red-500/10 text-red-600 dark:text-red-400 shadow-md scale-[1.02]'
+                        : 'border-white/80 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 text-gray-700 dark:text-gray-300 hover:bg-white/60'
                     }`}
                   >
                     🔄 Swap Device (Upgrade)
@@ -128,13 +128,13 @@ ${uploadedUrls.length > 0 ? `\n*Device Images:*\n${uploadedUrls.join('\n')}` : '
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, actionType: 'sell' })}
-                    className={`py-3 px-4 rounded-xl border text-sm font-semibold transition-all ${
+                    className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all backdrop-blur-xl ${
                       formData.actionType === 'sell'
-                        ? 'border-red-600 bg-red-50 text-red-600 shadow-sm'
-                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                        ? 'border-red-500 bg-red-500/10 text-red-600 dark:text-red-400 shadow-md scale-[1.02]'
+                        : 'border-white/80 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 text-gray-700 dark:text-gray-300 hover:bg-white/60'
                     }`}
                   >
-                    💵 Sell for Cash
+                    💰 Sell for Instant Cash
                   </button>
                 </div>
               </div>

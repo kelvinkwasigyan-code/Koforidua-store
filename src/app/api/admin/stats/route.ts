@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const [totalProducts, pendingOrdersCount, orders] = await Promise.all([
+    const [totalProducts, pendingOrdersCount, orders, recentProducts] = await Promise.all([
       prisma.product.count(),
       prisma.order.count({ where: { status: 'PENDING' } }),
       prisma.order.findMany({
@@ -15,6 +15,13 @@ export async function GET() {
               product: { select: { name: true } }
             }
           }
+        }
+      }),
+      prisma.product.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        include: {
+          category: { select: { name: true } }
         }
       })
     ]);
@@ -31,7 +38,8 @@ export async function GET() {
       totalSales,
       totalProducts,
       pendingOrders: pendingOrdersCount,
-      recentOrders: orders
+      recentOrders: orders,
+      recentProducts
     });
   } catch (error) {
     console.error('Failed to fetch admin stats:', error);

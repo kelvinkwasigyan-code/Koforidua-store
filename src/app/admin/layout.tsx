@@ -38,11 +38,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
     return (
         <div 
-            className="min-h-screen bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row relative overflow-hidden font-sans bg-cover bg-center bg-no-repeat bg-fixed"
-            style={{ backgroundImage: "url('/store-background.jpg')" }}
+            className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row relative overflow-hidden font-sans"
         >
-            {/* Ultra-Light Transparent Overlay for Maximum Image Clarity */}
-            <div className="absolute inset-0 bg-black/15 pointer-events-none z-0" />
 
             {/* Apple Ambient Glass Light Spheres */}
             <div className="fixed -top-32 -left-32 w-96 h-96 bg-red-500/15 dark:bg-red-600/20 rounded-full blur-[120px] pointer-events-none z-0 animate-pulse" />
@@ -51,9 +48,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             {/* Mobile Header Bar */}
             <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-b border-gray-200/80 dark:border-white/10 shadow-xs">
-                <Link href="/admin" className="font-[family-name:var(--font-outfit)] font-black text-xs sm:text-base text-gray-900 dark:text-white tracking-tight flex items-center gap-2 truncate">
+                <Link href="/admin" className="font-[family-name:var(--font-outfit)] flex items-center gap-2 truncate">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-sm shadow-red-500 shrink-0" />
-                    <span className="truncate">Joerich Phones & Accessories</span>
+                    <div className="flex flex-col leading-tight truncate">
+                        <span className="text-[10px] font-extrabold text-red-600 uppercase tracking-wider">
+                            Welcome,
+                        </span>
+                        <span className="text-sm font-black text-gray-950 dark:text-white tracking-tight truncate">
+                            Joel Arhin
+                        </span>
+                    </div>
                 </Link>
                 
                 {/* Menu Toggle Button (Triggers Right Side Drawer) */}
@@ -169,9 +173,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     {/* Brand Heading */}
                     <div className="flex items-center gap-2.5 pb-6 border-b border-gray-200/60 dark:border-gray-800/60">
                         <div className="w-3 h-3 rounded-full bg-red-600 shadow-md shadow-red-500/50" />
-                        <h1 className="font-[family-name:var(--font-outfit)] font-black text-lg tracking-tight text-gray-900 dark:text-white">
-                            Welcome, <span className="text-red-600 font-extrabold">Joel Arhin</span>
-                        </h1>
+                        <div className="flex flex-col leading-tight">
+                            <span className="text-[10px] font-extrabold text-red-600 uppercase tracking-wider">
+                                Welcome,
+                            </span>
+                            <span className="font-[family-name:var(--font-outfit)] font-black text-lg tracking-tight text-gray-950 dark:text-white">
+                                Joel Arhin
+                            </span>
+                        </div>
                     </div>
 
                     {/* Navigation Items */}

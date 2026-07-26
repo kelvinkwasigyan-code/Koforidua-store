@@ -20,8 +20,8 @@ export default function LoadingBar() {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] h-1 bg-transparent overflow-hidden">
-      <div className="h-full bg-red-600 animate-pulse w-full origin-left animate-infinite-loading"></div>
+    <div className="fixed top-0 left-0 right-0 z-[100] h-1 bg-transparent overflow-hidden pointer-events-none">
+      <div className="h-full bg-slate-950 dark:bg-white shadow-[0_0_12px_rgba(0,0,0,0.5)] dark:shadow-[0_0_12px_rgba(255,255,255,0.8)] w-full origin-left animate-infinite-loading"></div>
     </div>
   );
 }

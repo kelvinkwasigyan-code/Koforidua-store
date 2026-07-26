@@ -61,9 +61,23 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             ))}
 
             <Link
+              href="/swap-sell"
+              onClick={onClose}
+              className="mx-4 my-3 px-4 py-3 bg-red-500/10 text-red-600 dark:text-red-400 font-extrabold text-xs rounded-2xl border border-red-500/20 backdrop-blur-xl flex items-center justify-between shadow-2xs active:scale-95 transition-all"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-sm">🔄</span>
+                <span>Swap / Sell Device</span>
+              </div>
+              <span className="text-[9px] uppercase tracking-widest font-black px-2 py-0.5 bg-red-600 text-white rounded-md">
+                Instant
+              </span>
+            </Link>
+
+            <Link
               href="/wishlist"
               onClick={onClose}
-              className="px-6 py-3.5 text-gray-800 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 transition-colors flex items-center gap-2"
+              className="px-6 py-3.5 text-gray-800 dark:text-gray-200 hover:bg-red-50 hover:text-red-600 font-medium border-b border-gray-100 dark:border-slate-800 transition-colors flex items-center gap-2"
             >
               <span className="text-red-500 font-bold">❤️</span>
               <span>My Wishlist</span>

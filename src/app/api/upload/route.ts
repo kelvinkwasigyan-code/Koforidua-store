@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { uploadToSupabaseStorage } from '@/lib/supabaseStorage';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,18 +24,23 @@ export async function POST(request: NextRequest) {
     const fileUrls: string[] = [];
 
     for (const file of files) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      
-      // Clean filename
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const filename = `${uniqueSuffix}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-      const filepath = join(uploadDir, filename);
+      // 1. Try uploading to Supabase Storage first to get a permanent public URL
+      const supabasePublicUrl = await uploadToSupabaseStorage(file, file.name, 'products');
 
-      await writeFile(filepath, buffer);
-      
-      // We return the relative URL that can be accessed via the public folder
-      fileUrls.push(`/uploads/${filename}`);
+      if (supabasePublicUrl) {
+        fileUrls.push(supabasePublicUrl);
+      } else {
+        // 2. Fallback to local server filesystem upload
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const filename = `${uniqueSuffix}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+        const filepath = join(uploadDir, filename);
+
+        await writeFile(filepath, buffer);
+        fileUrls.push(`/uploads/${filename}`);
+      }
     }
 
     return NextResponse.json({ success: true, urls: fileUrls });

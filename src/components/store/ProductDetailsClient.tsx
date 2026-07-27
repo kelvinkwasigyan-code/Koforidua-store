@@ -93,6 +93,7 @@ export default function ProductDetailsClient({ product }: ProductDetailsClientPr
     const customProduct = {
       ...product,
       name: titleSuffix.length > 0 ? `${product.name} (${titleSuffix.join(' - ')})` : product.name,
+      image: activeImage || (product.images && product.images[0]),
     };
 
     for (let i = 0; i < quantity; i++) {

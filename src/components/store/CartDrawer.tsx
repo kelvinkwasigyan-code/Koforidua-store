@@ -6,10 +6,28 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight, MessageCircle } from 'lucide-react';
 
+function getCartItemImage(item: any): string {
+  if (item.image && typeof item.image === 'string' && item.image !== '/file.svg' && item.image !== '/placeholder.png' && item.image.trim() !== '') {
+    return item.image;
+  }
+  if (item.images && Array.isArray(item.images) && item.images[0] && item.images[0] !== '/file.svg' && item.images[0] !== '/placeholder.png') {
+    return item.images[0];
+  }
+  const name = (item.name || '').toLowerCase();
+  if (name.includes('17 pro') || name.includes('17pro')) return '/iphones-default/iphone-17-pro-colors.png';
+  if (name.includes('iphone 17') || name.includes('17')) return '/iphones-default/iphone-17-colors.png';
+  if (name.includes('16 pro') || name.includes('16pro')) return '/showcase_iphone16pro.png';
+  if (name.includes('ultra 2') || name.includes('apple watch')) return '/showcase_smartwatch.png';
+  if (name.includes('iphone') || name.includes('galaxy') || name.includes('pixel') || name.includes('phone')) return '/iphones.PNG';
+  if (name.includes('ipad') || name.includes('tablet') || name.includes('tab')) return '/tablet.PNG';
+  if (name.includes('watch')) return '/Watches.png';
+  if (name.includes('speaker') || name.includes('airpod') || name.includes('audio')) return '/speaker.PNG';
+  if (name.includes('fragrance') || name.includes('scalp') || name.includes('care')) return '/fragrance.PNG';
+  return '/Covers.png';
+}
+
 const CartDrawer = () => {
   const { cart, isOpen, closeCart, removeFromCart, updateQuantity, subtotal } = useCart();
-
-  if (!isOpen) return null;
 
   const [whatsappDisplayNumber, setWhatsappDisplayNumber] = React.useState('0547654736');
   const [formattedWaNumber, setFormattedWaNumber] = React.useState('233547654736');
@@ -27,6 +45,8 @@ const CartDrawer = () => {
       loadSettings();
     }
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   const handleWhatsAppCheckout = () => {
     if (cart.length === 0) return;
@@ -95,12 +115,10 @@ const CartDrawer = () => {
                 return (
                   <div key={item.id} className="flex items-center gap-3 bg-white/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-gray-200/60 dark:border-gray-700/60">
                     <div className="w-16 h-16 rounded-xl bg-gray-50 dark:bg-slate-900 p-1 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                      <Image
-                        src={item.image || '/logo.jpg'}
+                      <img
+                        src={getCartItemImage(item)}
                         alt={item.name}
-                        width={56}
-                        height={56}
-                        className="object-contain"
+                        className="w-full h-full object-contain mix-blend-multiply"
                       />
                     </div>
 

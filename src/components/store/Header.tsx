@@ -11,8 +11,9 @@ import MobileMenu from './MobileMenu';
 import TopBar from './TopBar';
 
 export const navLinks = [
-    { name: 'Home', href: '/' },
+    { name: 'Dashboard', href: '/' },
     { name: 'New Arrivals', href: '/new-arrivals' },
+    { name: 'Home Used', href: '/home-used' },
 ];
 
 export default function Header() {

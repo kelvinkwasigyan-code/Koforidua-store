@@ -28,14 +28,14 @@ export async function GET() {
 
     const xmlText = await res.text();
 
-    // Parse RSS items using Regex for zero dependencies
-    const itemMatches = xmlText.match(/<item>[\s\S]*?<\/item>/gi) || [];
+    // Parse RSS/Atom items using Regex for zero dependencies
+    const itemMatches = xmlText.match(/<(?:entry|item)>[\s\S]*?<\/(?:entry|item)>/gi) || [];
     
     const parsedNews: AppleNewsItem[] = itemMatches.slice(0, 5).map((itemXml, idx) => {
       const titleMatch = itemXml.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i);
-      const linkMatch = itemXml.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i);
-      const descMatch = itemXml.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i);
-      const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
+      const linkMatch = itemXml.match(/<link[^>]*href="([^"]+)"(?:[^>]*rel="alternate")?[^>]*>/i) || itemXml.match(/<link[^>]*href="([^"]+)"/i) || itemXml.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i);
+      const descMatch = itemXml.match(/<(?:content|description)>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:content|description)>/i);
+      const pubDateMatch = itemXml.match(/<(?:updated|pubDate)>([\s\S]*?)<\/(?:updated|pubDate)>/i);
 
       let title = titleMatch ? titleMatch[1].trim() : 'Latest Apple News';
       let link = linkMatch ? linkMatch[1].trim() : 'https://www.apple.com/newsroom/';

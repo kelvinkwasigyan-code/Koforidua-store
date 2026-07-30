@@ -27,7 +27,7 @@ export default function MobileBottomNav() {
   }
 
   const navItems = [
-    { label: 'Home', href: '/', icon: Home },
+    { label: 'Dashboard', href: '/', icon: Home },
     { label: 'Shop', href: '/products', icon: Grid },
     { label: 'Wishlist', href: '/wishlist', icon: Heart, badge: wishlistCount },
   ];

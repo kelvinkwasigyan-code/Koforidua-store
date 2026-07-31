@@ -6,7 +6,7 @@ import { useCart } from '@/context/CartContext';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { cart, removeFromCart, updateQuantity, subtotal } = useCart();
 
   if (cart.length === 0) {
     return (
@@ -109,7 +109,7 @@ export default function CartPage() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span className="font-bold text-gray-900">GH₵ {totalPrice.toLocaleString()}</span>
+                <span className="font-bold text-gray-900">GH₵ {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Delivery</span>
@@ -119,7 +119,7 @@ export default function CartPage() {
 
             <div className="border-t pt-4 flex justify-between items-center text-lg font-black text-gray-900">
               <span>Total</span>
-              <span className="text-red-600">GH₵ {totalPrice.toLocaleString()}</span>
+              <span className="text-red-600">GH₵ {subtotal.toLocaleString()}</span>
             </div>
 
             <Link

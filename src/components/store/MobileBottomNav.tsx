@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { getWishlist } from '@/lib/wishlist';
-import { Home, Grid, Heart, ShoppingBag, Package } from 'lucide-react';
+import { Home, Grid, Heart, ShoppingBag, Package, MapPin, Search } from 'lucide-react';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -28,7 +28,9 @@ export default function MobileBottomNav() {
 
   const navItems = [
     { label: 'Dashboard', href: '/', icon: Home },
+    { label: 'Search', href: '/products', icon: Search },
     { label: 'Shop', href: '/products', icon: Grid },
+    { label: 'Store', href: '/store-location', icon: MapPin },
     { label: 'Wishlist', href: '/wishlist', icon: Heart, badge: wishlistCount },
   ];
 
@@ -60,21 +62,7 @@ export default function MobileBottomNav() {
         );
       })}
 
-      {/* Cart Quick Button */}
-      <button
-        onClick={openCart}
-        className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-2xl transition-all relative text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium active:scale-95"
-      >
-        <div className="relative">
-          <ShoppingBag size={20} className="stroke-2" />
-          {totalCartItems > 0 && (
-            <span className="absolute -top-1.5 -right-2 bg-gradient-to-r from-red-600 to-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
-              {totalCartItems}
-            </span>
-          )}
-        </div>
-        <span className="text-[10px] tracking-tight">Cart</span>
-      </button>
+
     </div>
   );
 }

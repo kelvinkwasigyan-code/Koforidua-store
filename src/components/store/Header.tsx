@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { getWishlist } from '@/lib/wishlist';
-import { ShoppingCart, User, Search, Menu, RefreshCw, Heart } from 'lucide-react';
+import { ShoppingCart, User, Menu, RefreshCw, Heart, Search } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import TopBar from './TopBar';
 
@@ -14,6 +14,7 @@ export const navLinks = [
     { name: 'Dashboard', href: '/' },
     { name: 'New Arrivals', href: '/new-arrivals' },
     { name: 'Home Used', href: '/home-used' },
+    { name: 'Store Location', href: '/store-location' },
 ];
 
 export default function Header() {
@@ -21,7 +22,6 @@ export default function Header() {
     const { cart, openCart } = useCart();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [wishlistCount, setWishlistCount] = useState(0);
 
     useEffect(() => {
@@ -90,15 +90,6 @@ export default function Header() {
 
                     {/* Quick Actions & Profile/Cart Links */}
                     <div className="flex items-center gap-2 sm:gap-3 text-sm font-medium">
-                        {/* Mobile Search Icon Toggle */}
-                        <button
-                            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-                            className="md:hidden p-2 text-gray-700 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100 flex items-center"
-                            title="Search"
-                        >
-                            <Search size={20} />
-                        </button>
-
                         <Link
                             href="/swap-sell"
                             className="flex items-center gap-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl text-red-600 dark:text-red-400 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold border border-red-500/30 dark:border-red-500/20 shadow-2xs hover:bg-white/60 dark:hover:bg-slate-900/60 transition-all duration-300 active:scale-95 shrink-0"
@@ -107,18 +98,7 @@ export default function Header() {
                             <span className="hidden sm:inline">Swap / Sell</span>
                         </Link>
 
-                        <Link
-                            href="/wishlist"
-                            className="relative p-2 text-gray-700 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100 flex items-center"
-                            title="Wishlist"
-                        >
-                            <Heart size={20} />
-                            {wishlistCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
-                                    {wishlistCount}
-                                </span>
-                            )}
-                        </Link>
+
 
                         <button
                             onClick={openCart}
@@ -134,27 +114,6 @@ export default function Header() {
                         </button>
                     </div>
                 </div>
-
-                {/* Mobile Search Bar Expansion */}
-                {isMobileSearchOpen && (
-                    <div className="md:hidden px-4 pb-3 pt-1 border-t border-gray-100 bg-white shadow-inner">
-                        <div className="relative flex items-center">
-                            <Search className="absolute left-3 text-gray-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search smartphones, watches, accessories..."
-                                autoFocus
-                                className="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-                            />
-                            <button
-                                onClick={() => setIsMobileSearchOpen(false)}
-                                className="ml-2 text-xs font-bold text-gray-500 hover:text-gray-900 px-2 py-1"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                )}
 
                 {/* Mobile Navigation Tab Bar (Home, New Arrivals, Home Used, All Products) */}
                 <div className="md:hidden flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 overflow-x-auto scrollbar-none shadow-2xs w-full">
@@ -175,15 +134,7 @@ export default function Header() {
                                     </Link>
                                 );
                             })}
-                            <Link
-                                href="/used-phones"
-                                className={`px-3.5 py-1.5 rounded-full font-extrabold transition-all duration-200 ${pathname === '/used-phones' || pathname === '/products'
-                                        ? 'bg-red-600 text-white shadow-xs'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
-                                    }`}
-                            >
-                                Used Phones
-                            </Link>
+
                         </div>
                     </nav>
                 </div>

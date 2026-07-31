@@ -77,7 +77,7 @@ function getPhoneReleaseRank(name: string): number {
   return 0;
 }
 
-export default function ProductGrid({ selectedCategory, condition, onlyUploaded }: { selectedCategory?: string | null, condition?: string, onlyUploaded?: boolean }) {
+export default function ProductGrid({ selectedCategory, condition, onlyUploaded, excludeKeywords }: { selectedCategory?: string | null, condition?: string, onlyUploaded?: boolean, excludeKeywords?: string[] }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -121,6 +121,18 @@ export default function ProductGrid({ selectedCategory, condition, onlyUploaded 
     // 1. Category Filter
     if (selectedCategory) {
       result = result.filter((p) => p.category?.name.toLowerCase() === selectedCategory.toLowerCase());
+    }
+
+    // 1.5. Exclude Keywords Filter (e.g. filter out smartphones)
+    if (excludeKeywords && excludeKeywords.length > 0) {
+      result = result.filter((p) => {
+        const catName = (p.category?.name || '').toLowerCase();
+        const prodName = p.name.toLowerCase();
+        return !excludeKeywords.some(keyword => {
+          const k = keyword.toLowerCase();
+          return catName.includes(k) || prodName.includes(k);
+        });
+      });
     }
 
     // 2. Condition Filter

@@ -12,8 +12,8 @@ import TopBar from './TopBar';
 
 export const navLinks = [
     { name: 'Dashboard', href: '/' },
-    { name: 'New Arrivals', href: '/new-arrivals' },
     { name: 'Home Used', href: '/home-used' },
+    { name: 'Other Products', href: '/other-products' },
     { name: 'Store Location', href: '/store-location' },
 ];
 

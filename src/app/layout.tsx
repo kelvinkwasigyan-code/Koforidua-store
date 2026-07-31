@@ -9,6 +9,7 @@ import Footer from '@/components/store/Footer';
 import CartDrawer from '@/components/store/CartDrawer';
 import LoadingBar from '@/components/store/LoadingBar';
 import MobileBottomNav from '@/components/store/MobileBottomNav';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -73,6 +74,7 @@ export default function RootLayout({
           <Footer />
           <CartDrawer />
           <MobileBottomNav />
+          <SpeedInsights />
           </CartProvider>
         </ThemeProvider>
       </body>

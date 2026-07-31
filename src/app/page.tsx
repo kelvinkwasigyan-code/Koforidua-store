@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import CategoryBar from '@/components/CategoryBar';
 import ProductGrid from '@/components/store/ProductGrid';
 import RecentlyViewedSection from '@/components/store/RecentlyViewedSection';
@@ -17,6 +18,7 @@ interface AppleNewsItem {
   badgeBg: string;
   gradient: string;
   orbColor: string;
+  image?: string;
 }
 
 const fallbackSlides: AppleNewsItem[] = [
@@ -30,6 +32,7 @@ const fallbackSlides: AppleNewsItem[] = [
     badgeBg: 'bg-red-950/60 border border-red-800/40 text-red-400',
     gradient: 'from-slate-950 via-slate-900 to-slate-950',
     orbColor: 'bg-red-600/10',
+    image: '/iphones.PNG',
   },
   {
     title: 'Apple Watch Ultra 2 now available in Black Titanium',
@@ -41,6 +44,7 @@ const fallbackSlides: AppleNewsItem[] = [
     badgeBg: 'bg-indigo-950/60 border border-indigo-800/40 text-indigo-400',
     gradient: 'from-slate-950 via-gray-950 to-slate-950',
     orbColor: 'bg-indigo-600/10',
+    image: '/Watches.png',
   },
   {
     title: 'Apple Intelligence features expand across iOS & macOS',
@@ -52,6 +56,7 @@ const fallbackSlides: AppleNewsItem[] = [
     badgeBg: 'bg-rose-950/60 border border-rose-800/40 text-rose-400',
     gradient: 'from-slate-950 via-slate-900 to-slate-950',
     orbColor: 'bg-rose-600/10',
+    image: '/tablet.PNG',
   },
 ];
 
@@ -98,11 +103,27 @@ export default function Home() {
 
         {/* Minimal Sleek Apple Newsroom Banner Hero Carousel */}
         <div className="w-full max-w-7xl mx-auto my-3 px-4">
-          <div className="relative rounded-2xl overflow-hidden bg-slate-950/90 border border-slate-800/80 dark:border-white/10 px-5 py-5 sm:px-8 sm:py-6 shadow-sm flex flex-col justify-between min-h-[190px] sm:min-h-[220px] transition-all duration-700 group">
+          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-black to-slate-950 border border-slate-800 dark:border-white/10 px-5 py-6 sm:px-8 sm:py-8 shadow-xl flex flex-col justify-between min-h-[200px] sm:min-h-[240px] transition-all duration-700 group">
 
             {/* Subtle Ambient Background Lighting */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-[90px] pointer-events-none" />
+            <div className={`absolute top-0 right-0 w-72 h-72 ${slide.orbColor} rounded-full blur-[90px] pointer-events-none transition-colors duration-700`} />
             <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-slate-800/20 rounded-full blur-[90px] pointer-events-none" />
+
+            {/* Dynamic Product Background Image */}
+            {slide.image && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute right-[-15%] sm:right-[5%] top-1/2 -translate-y-1/2 w-56 h-56 sm:w-80 sm:h-80 opacity-40 sm:opacity-70 transition-opacity duration-700">
+                  <Image
+                    src={slide.image}
+                    alt="Apple Product"
+                    fill
+                    className="object-contain object-right transform group-hover:scale-105 transition-transform duration-1000"
+                  />
+                </div>
+                {/* Fade gradient so text stays readable */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent sm:w-2/3" />
+              </div>
+            )}
 
             {/* Top Row: News Tag & Location */}
             <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 mb-1.5">
@@ -124,9 +145,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Middle Row: Title & Description (Reduced Boldness) */}
-            <div className="relative z-10 space-y-1.5 my-1">
-              <h1 className="text-base sm:text-xl font-medium text-slate-100 tracking-normal leading-snug transition-all duration-500 line-clamp-2">
+            {/* Middle Row: Title & Description */}
+            <div className="relative z-10 space-y-2 my-2 max-w-2xl">
+              <h1 className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight leading-tight transition-all duration-500 line-clamp-2 drop-shadow-sm">
                 {slide.title}
               </h1>
 
@@ -163,9 +184,8 @@ export default function Home() {
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${
-                      currentSlide === idx ? 'w-5 bg-red-500' : 'w-1 bg-white/20 hover:bg-white/50'
-                    }`}
+                    className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${currentSlide === idx ? 'w-5 bg-red-500' : 'w-1 bg-white/20 hover:bg-white/50'
+                      }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}

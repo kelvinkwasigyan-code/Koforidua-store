@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
-import { Filter, SlidersHorizontal, ChevronDown, Check, X, Star } from 'lucide-react';
+import { Filter, SlidersHorizontal, ChevronDown, Check, X, Star, Search } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -76,6 +76,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Filters State
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -104,6 +105,14 @@ export default function ProductsPage() {
       }
     }
     fetchProducts();
+
+    // Check for search query param on load
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('search')) {
+        setSearchQuery(params.get('search') || '');
+      }
+    }
   }, []);
 
   // Category choices including explicit iPhones, Android, Tablets, Chargers, Speakers, and AirPods
@@ -126,6 +135,16 @@ export default function ProductsPage() {
   // Filter and sort logic
   const filteredProducts = useMemo(() => {
     let result = [...products];
+
+    // Search Query Filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(p => 
+        (p.name && p.name.toLowerCase().includes(q)) || 
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.category?.name && p.category.name.toLowerCase().includes(q))
+      );
+    }
 
     // Category Filter
     if (selectedCategories.length > 0) {
@@ -306,7 +325,7 @@ export default function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">All Products</h1>
             <p className="text-sm text-gray-500 mt-1">Explore our full catalog of premium devices and accessories.</p>
@@ -335,6 +354,26 @@ export default function ProductsPage() {
               <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
             </div>
           </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-8 relative max-w-2xl">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Search for smartphones, watches, accessories..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white border border-gray-200 rounded-2xl py-3.5 pl-12 pr-10 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 transition-shadow shadow-sm"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">

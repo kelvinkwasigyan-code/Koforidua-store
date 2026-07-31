@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { ShieldCheck, Truck, CreditCard, Banknote, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -21,7 +22,6 @@ export default function CheckoutPage() {
   });
   
   const [isProcessing, setIsProcessing] = useState(false);
-  const [momoState, setMomoState] = useState<'idle' | 'awaiting' | 'success'>('idle');
   const [error, setError] = useState<string | null>(null);
 
   // Hardcode a flat delivery fee for simplicity
@@ -30,12 +30,12 @@ export default function CheckoutPage() {
 
   // Redirect to home if cart is empty
   useEffect(() => {
-    if (cart.length === 0 && !isProcessing && momoState === 'idle') {
+    if (cart.length === 0 && !isProcessing) {
       router.push('/');
     }
-  }, [cart.length, router, isProcessing, momoState]);
+  }, [cart.length, router, isProcessing]);
 
-  if (cart.length === 0 && momoState === 'idle') {
+  if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-sm max-w-md w-full text-center">
@@ -53,7 +53,7 @@ export default function CheckoutPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const processOrder = async () => {
+  const processOrder = async (paystackReference?: string) => {
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -61,6 +61,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           ...formData,
           totalAmount,
+          paystackReference,
           cartItems: cart.map(item => ({
             productId: item.id,
             quantity: item.quantity,
@@ -77,7 +78,6 @@ export default function CheckoutPage() {
     } catch (err: any) {
       setError(err.message);
       setIsProcessing(false);
-      setMomoState('idle');
     }
   };
 
@@ -87,19 +87,45 @@ export default function CheckoutPage() {
     setError(null);
 
     if (formData.paymentMethod === 'MOMO') {
-      // Trigger Mock MoMo Flow
-      setMomoState('awaiting');
+      const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
       
-      // Simulate waiting for user to approve on their phone (4 seconds)
-      setTimeout(() => {
-        setMomoState('success');
-        
-        // After showing success for 1.5s, process the order
-        setTimeout(() => {
-          processOrder();
-        }, 1500);
-      }, 4000);
-      
+      if (!paystackKey) {
+        setError('Payment gateway is not configured yet. Please contact support or enter your Paystack Public Key in .env');
+        setIsProcessing(false);
+        return;
+      }
+
+      // @ts-ignore
+      const handler = window.PaystackPop.setup({
+        key: paystackKey,
+        email: formData.customerEmail || 'customer@koforiduastore.com',
+        amount: Math.round(totalAmount * 100), // Paystack requires amount in pesewas
+        currency: 'GHS',
+        ref: 'KFS_' + Math.floor((Math.random() * 1000000000) + 1),
+        metadata: {
+          custom_fields: [
+            {
+              display_name: "Customer Name",
+              variable_name: "customer_name",
+              value: formData.customerName
+            },
+            {
+              display_name: "Phone Number",
+              variable_name: "phone_number",
+              value: formData.customerPhone
+            }
+          ]
+        },
+        callback: function(response: any) {
+          // Payment complete, transaction reference is in response.reference
+          processOrder(response.reference);
+        },
+        onClose: function() {
+          setIsProcessing(false);
+          setError('Payment was cancelled.');
+        }
+      });
+      handler.openIframe();
     } else {
       // Cash on Delivery
       await processOrder();
@@ -107,8 +133,10 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4">
+    <>
+      <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-8">Checkout</h1>
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -264,37 +292,7 @@ export default function CheckoutPage() {
           </div>
         </form>
       </div>
-
-      {/* Mock MoMo Interactive Overlay */}
-      {momoState !== 'idle' && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center transform transition-all animate-in zoom-in-95 duration-200">
-            {momoState === 'awaiting' ? (
-              <>
-                <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Loader2 size={32} className="text-yellow-600 animate-spin" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-2">Awaiting Authorization</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                  Please approve the transaction of <strong className="text-gray-900">GH₵{totalAmount.toFixed(2)}</strong> on your phone <br/>({formData.customerPhone}).
-                </p>
-                <div className="text-xs text-gray-400">Do not close this window.</div>
-              </>
-            ) : (
-              <>
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 size={40} className="text-green-600" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-2">Payment Successful!</h3>
-                <p className="text-gray-500 text-sm mb-6">Your transaction has been approved.</p>
-                <div className="flex justify-center">
-                  <Loader2 size={20} className="text-gray-300 animate-spin" />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { getWishlist } from '@/lib/wishlist';
 import { ShoppingCart, User, Menu, RefreshCw, Heart, Search } from 'lucide-react';
@@ -19,10 +19,12 @@ export const navLinks = [
 
 export default function Header() {
     const pathname = usePathname();
+    const router = useRouter();
     const { cart, openCart } = useCart();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [wishlistCount, setWishlistCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         setWishlistCount(getWishlist().length);
@@ -79,14 +81,24 @@ export default function Header() {
                     </div>
 
                     {/* Search Bar */}
-                    <div className="flex-1 max-w-md hidden md:flex items-center relative">
+                    <form 
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            if (searchQuery.trim()) {
+                                router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+                            }
+                        }}
+                        className="flex-1 max-w-md hidden md:flex items-center relative"
+                    >
                         <Search className="absolute left-3.5 text-gray-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search smartphones, watches, accessories..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-full py-2.5 pl-10 pr-4 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-500/80 transition-all shadow-inner"
                         />
-                    </div>
+                    </form>
 
                     {/* Quick Actions & Profile/Cart Links */}
                     <div className="flex items-center gap-2 sm:gap-3 text-sm font-medium">
@@ -95,7 +107,7 @@ export default function Header() {
                             className="flex items-center gap-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl text-red-600 dark:text-red-400 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold border border-red-500/30 dark:border-red-500/20 shadow-2xs hover:bg-white/60 dark:hover:bg-slate-900/60 transition-all duration-300 active:scale-95 shrink-0"
                         >
                             <RefreshCw size={13} />
-                            <span className="hidden sm:inline">Swap / Sell</span>
+                            <span>Swap / Sell</span>
                         </Link>
 
 

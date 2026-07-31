@@ -1,8 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 401 });
+    }
+
     const [totalProducts, pendingOrdersCount, orders, recentProducts] = await Promise.all([
       prisma.product.count(),
       prisma.order.count({ where: { status: 'PENDING' } }),

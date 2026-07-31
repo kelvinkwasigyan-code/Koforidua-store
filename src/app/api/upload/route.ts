@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { uploadToSupabaseStorage } from '@/lib/supabaseStorage';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin access required to upload files' }, { status: 401 });
+    }
+
     const data = await request.formData();
     const files: File[] = data.getAll('files') as unknown as File[];
 

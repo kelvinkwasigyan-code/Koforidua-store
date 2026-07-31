@@ -54,7 +54,7 @@ export default function NewArrivalsPage() {
 
         {/* Newly Uploaded Product Grid */}
         <div className="max-w-7xl mx-auto px-4">
-          <ProductGrid selectedCategory={selectedCategory} onlyUploaded={true} />
+          <ProductGrid selectedCategory={selectedCategory} condition="NEW" />
         </div>
 
       </main>

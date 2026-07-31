@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized: You must be logged in to perform this action' }, { status: 401 });
+    }
+
     const data = await request.json();
     const { name, description, price, stockQuantity, categoryName, images, condition, colors, storage } = data;
 

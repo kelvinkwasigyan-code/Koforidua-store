@@ -53,7 +53,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <body className="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden w-full max-w-full">
         
         {/* Apple Ambient Glass Light Spheres */}

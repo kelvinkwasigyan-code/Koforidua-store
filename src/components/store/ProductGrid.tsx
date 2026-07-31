@@ -232,7 +232,7 @@ export default function ProductGrid({ selectedCategory, condition, onlyUploaded,
                   : 'text-gray-600 dark:text-gray-400 hover:text-amber-600'
                   }`}
               >
-                Home Used
+                Used Phones
               </button>
             </div>
           )}
@@ -275,12 +275,15 @@ export default function ProductGrid({ selectedCategory, condition, onlyUploaded,
               >
                 <Link href={`/products/${product.id}`} className="block flex-grow relative">
                   <div className="h-40 sm:h-48 w-full overflow-hidden bg-gradient-to-b from-gray-100/50 to-transparent dark:from-slate-800/40 flex items-center justify-center relative p-2.5">
-                    <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
-                      ? 'bg-amber-500 text-white border-amber-600'
-                      : 'bg-emerald-600 text-white border-emerald-700'
-                      }`}>
-                      {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
-                    </span>
+                    {/* Only show condition badge for Phones and Tablets */}
+                    {(product.category?.name?.toLowerCase().includes('phone') || product.category?.name?.toLowerCase().includes('tablet')) && (
+                      <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
+                        ? 'bg-amber-500 text-white border-amber-600'
+                        : 'bg-emerald-600 text-white border-emerald-700'
+                        }`}>
+                        {product.condition === 'USED' ? 'Used Phones' : 'Brand New'}
+                      </span>
+                    )}
 
                     {/* Hover Color Pill Overlay */}
                     {product.features?.colors && Array.isArray(product.features.colors) && product.features.colors.length > 0 && (

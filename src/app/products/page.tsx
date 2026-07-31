@@ -129,7 +129,7 @@ export default function ProductsPage() {
   // Condition options
   const availableConditions = [
     { label: 'Brand New', value: 'NEW' },
-    { label: 'Home Used', value: 'USED' },
+    { label: 'Used Phones', value: 'USED' },
   ];
 
   // Filter and sort logic
@@ -417,12 +417,14 @@ export default function ProductsPage() {
                     >
                       <Link href={`/products/${product.id}`} className="block flex-grow relative">
                         <div className="h-40 sm:h-48 w-full overflow-hidden bg-gray-50 dark:bg-slate-800/50 flex items-center justify-center relative p-2.5">
-                          <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
-                              ? 'bg-amber-500 text-white border-amber-600'
-                              : 'bg-emerald-600 text-white border-emerald-700'
-                            }`}>
-                            {product.condition === 'USED' ? 'Home Used' : 'Brand New'}
-                          </span>
+                          {(product.category?.name?.toLowerCase().includes('phone') || product.category?.name?.toLowerCase().includes('tablet')) && (
+                            <span className={`absolute top-2.5 left-2.5 z-10 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border shadow-2xs ${product.condition === 'USED'
+                                ? 'bg-amber-500 text-white border-amber-600'
+                                : 'bg-emerald-600 text-white border-emerald-700'
+                              }`}>
+                              {product.condition === 'USED' ? 'Used Phones' : 'Brand New'}
+                            </span>
+                          )}
 
                           <img
                             src={getProductImage(product)}

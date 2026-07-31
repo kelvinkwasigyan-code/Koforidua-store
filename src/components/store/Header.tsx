@@ -11,8 +11,8 @@ import MobileMenu from './MobileMenu';
 import TopBar from './TopBar';
 
 export const navLinks = [
-    { name: 'Dashboard', href: '/' },
-    { name: 'Home Used', href: '/home-used' },
+    { name: 'Home', href: '/' },
+    { name: 'Used Phones', href: '/home-used' },
     { name: 'Other Products', href: '/other-products' },
     { name: 'Store Location', href: '/store-location' },
 ];

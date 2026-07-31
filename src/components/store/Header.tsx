@@ -114,7 +114,7 @@ export default function Header() {
                     <div className="flex items-center gap-2 sm:gap-3 text-sm font-medium">
                         <Link
                             href="/swap-sell"
-                            className="flex items-center gap-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl text-red-600 dark:text-red-400 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold border border-red-500/30 dark:border-red-500/20 shadow-2xs hover:bg-white/60 dark:hover:bg-slate-900/60 transition-all duration-300 active:scale-95 shrink-0"
+                            className="hidden md:flex items-center gap-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl text-red-600 dark:text-red-400 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold border border-red-500/30 dark:border-red-500/20 shadow-2xs hover:bg-white/60 dark:hover:bg-slate-900/60 transition-all duration-300 active:scale-95 shrink-0"
                         >
                             <RefreshCw size={13} />
                             <span>Swap / Sell</span>

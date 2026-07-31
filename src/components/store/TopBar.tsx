@@ -4,13 +4,13 @@ import React from 'react';
 
 export default function TopBar() {
   return (
-    <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 text-white text-xs py-1.5 px-4 flex justify-between items-center font-sans shadow-xs">
+    <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 text-white text-xs sm:text-sm py-1 px-2 sm:px-4 flex justify-between items-center font-sans shadow-xs">
       <div className="flex items-center gap-2">
         <svg className="w-3.5 h-3.5 fill-white drop-shadow-sm" viewBox="0 0 384 512">
           <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 24 184.5 15.6 245.9c-15.6 102.5 45.4 207 98.4 207 26.6 0 46.1-15.6 77.2-15.6 30 0 45.9 15.6 77.2 15.6 42.6 0 78.4-44.1 98.4-87.9-53.7-21.7-87.1-66.7-88.1-122zM218.4 97.4c26.1-33 13.9-66.2 12.2-70.4-33.1 3.5-62.5 23.3-76.7 51.5-12.7 24.5-9.3 60.1 14.6 65.6 2.2 45.3 47.9 31.9 49.9 28.3z" />
         </svg>
         <span className="font-bold tracking-wide text-white/95 text-[11px] sm:text-xs">
-          Premium Devices & Accessories
+          Devices & Accessories
         </span>
       </div>
 

@@ -3,6 +3,7 @@ import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '../context/CartContext';
 import { Suspense } from 'react';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import Header from '@/components/store/Header';
 import Footer from '@/components/store/Footer';
 import CartDrawer from '@/components/store/CartDrawer';
@@ -52,15 +53,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body className="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative min-h-screen selection:bg-red-500 selection:text-white">
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative min-h-screen selection:bg-red-500 selection:text-white overflow-x-hidden w-full max-w-full">
         
         {/* Apple Ambient Glass Light Spheres */}
         <div className="fixed -top-32 -left-32 w-96 h-96 bg-red-500/10 dark:bg-red-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
         <div className="fixed top-1/2 -right-32 w-[30rem] h-[30rem] bg-indigo-500/10 dark:bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
         <div className="fixed -bottom-32 left-1/4 w-[28rem] h-[28rem] bg-rose-500/10 dark:bg-rose-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
-        <CartProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <CartProvider>
           <Suspense fallback={null}>
             <LoadingBar />
           </Suspense>
@@ -71,7 +73,8 @@ export default function RootLayout({
           <Footer />
           <CartDrawer />
           <MobileBottomNav />
-        </CartProvider>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, Settings, MessageCircle, Music, Globe } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { X, Settings, MessageCircle, Music, Globe, Moon, Sun } from 'lucide-react';
 import { navLinks } from './Header';
 
 interface MobileMenuProps {
@@ -10,6 +12,13 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!isOpen) return null;
 
   return (
@@ -85,8 +94,22 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </nav>
         </div>
 
-        {/* Bottom Section: Social Media Icons */}
-        <div className="p-6 bg-gray-50 border-t">
+        {/* Bottom Section: Theme & Social Media */}
+        <div className="p-6 bg-gray-50 dark:bg-slate-900 border-t dark:border-slate-800">
+          
+          {/* Theme Toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Appearance</span>
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-slate-800 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                <span className="text-xs font-semibold">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+            )}
+          </div>
 
           {/* Social Media Links Row */}
           <div className="flex items-center justify-around text-gray-600 pt-2 border-t border-gray-200">

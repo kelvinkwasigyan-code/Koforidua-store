@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    let paymentStatus = 'PENDING';
+    let paymentStatus: 'PENDING' | 'SUCCESS' | 'FAILED' = 'PENDING';
 
     if (paymentMethod === 'MOMO') {
       if (!paystackReference) {

@@ -105,7 +105,7 @@ export default function AdminSettingsPage() {
   const handleSignOut = () => {
     localStorage.removeItem('joerich_user');
     localStorage.removeItem('admin_session');
-    router.push('/admin/login');
+    router.push('/login');
   };
 
   return (
@@ -268,10 +268,10 @@ export default function AdminSettingsPage() {
             <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <ShieldCheck size={20} className="text-red-600" /> Admin Security & Credentials
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Update the email address and password used to access <code className="bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 font-mono">/admin/login</code>.</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Update the email address and password used to access <code className="bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 font-mono">/login</code>.</p>
           </div>
           <Link
-            href="/admin/login"
+            href="/login"
             className="text-xs font-bold text-red-600 dark:text-red-400 hover:underline flex items-center gap-1"
           >
             <span>Login Page</span>

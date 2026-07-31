@@ -62,7 +62,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           name: product.name,
           price: product.price,
           salePrice: product.salePrice,
-          image: (product.images && product.images[0]) || '/file.svg',
+          image: product.imageUrl || (product.images && product.images.length > 0 ? product.images[0] : null) || product.image || '/file.svg',
           quantity: 1,
         },
       ];

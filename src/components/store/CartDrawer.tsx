@@ -10,6 +10,9 @@ function getCartItemImage(item: any): string {
   if (item.image && typeof item.image === 'string' && item.image !== '/file.svg' && item.image !== '/placeholder.png' && item.image.trim() !== '') {
     return item.image;
   }
+  if (item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl !== '') {
+    return item.imageUrl;
+  }
   if (item.images && Array.isArray(item.images) && item.images[0] && item.images[0] !== '/file.svg' && item.images[0] !== '/placeholder.png') {
     return item.images[0];
   }

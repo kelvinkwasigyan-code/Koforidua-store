@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sparkles, ArrowRight, Lock } from 'lucide-react';
 import { login } from './actions';
 
@@ -10,25 +11,39 @@ export default async function LoginPage({
   const { error } = await searchParams;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Dynamic Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/login-bg.jpg"
+          alt="Joerich Phones Store"
+          fill
+          className="object-cover object-center md:object-bottom opacity-90"
+          priority
+        />
+        {/* Dark overlay to ensure form remains readable */}
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         
         {/* Brand Logo/Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-red-600 text-white shadow-xl shadow-red-600/30 mb-6">
-            <Lock size={32} />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-3xl bg-red-600 text-white shadow-xl shadow-red-600/30 mb-4 sm:mb-6">
+            <Lock size={28} className="sm:hidden" />
+            <Lock size={32} className="hidden sm:block" />
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-md">
             Welcome back
           </h1>
-          <p className="text-sm font-medium text-gray-500 mt-2">
+          <p className="text-xs sm:text-sm font-medium text-gray-200 mt-2 drop-shadow-sm px-4">
             Sign in to manage your store dashboard
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-white">
-          <form action={login} className="space-y-5">
+        <div className="bg-white/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-gray-900/50 border border-white/20 mx-2 sm:mx-0">
+          <form action={login} className="space-y-4 sm:space-y-5">
             {error && (
               <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold text-center border border-red-100">
                 {error}

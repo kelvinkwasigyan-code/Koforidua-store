@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '../context/CartContext';
+import { Suspense } from 'react';
 import Header from '@/components/store/Header';
 import Footer from '@/components/store/Footer';
 import CartDrawer from '@/components/store/CartDrawer';
@@ -60,7 +61,9 @@ export default function RootLayout({
         <div className="fixed -bottom-32 left-1/4 w-[28rem] h-[28rem] bg-rose-500/10 dark:bg-rose-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
         <CartProvider>
-          <LoadingBar />
+          <Suspense fallback={null}>
+            <LoadingBar />
+          </Suspense>
           <Header />
           <div className="pb-24 md:pb-0 min-h-screen relative z-10">
             {children}

@@ -141,7 +141,7 @@ export default function Header() {
                 <div className="md:hidden flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 overflow-x-auto scrollbar-none shadow-2xs w-full">
                     <nav className="flex items-center gap-2 whitespace-nowrap text-xs w-full">
                         <div className="flex items-center gap-2">
-                            {navLinks.map((link) => {
+                            {navLinks.filter(link => link.name !== 'Store Location').map((link) => {
                                 const isActive = pathname === link.href;
                                 return (
                                     <Link

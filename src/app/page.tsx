@@ -70,13 +70,16 @@ export default function Home() {
     async function loadLiveAppleNews() {
       try {
         const res = await fetch('/api/apple-news');
+        if (!res.ok) {
+          throw new Error('Failed to fetch live news');
+        }
         const data = await res.json();
         if (data.news && Array.isArray(data.news) && data.news.length > 0) {
           setNewsSlides(data.news);
           setIsLive(data.live ?? true);
         }
       } catch (err) {
-        console.error('Failed to load live Apple News:', err);
+        console.warn('Live Apple News not available, falling back to default slides.');
       }
     }
     loadLiveAppleNews();
@@ -106,22 +109,23 @@ export default function Home() {
           <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-black to-slate-950 border border-slate-800 dark:border-white/10 px-5 py-6 sm:px-8 sm:py-8 shadow-xl flex flex-col justify-between min-h-[200px] sm:min-h-[240px] transition-all duration-700 group">
 
             {/* Subtle Ambient Background Lighting */}
-            <div className={`absolute top-0 right-0 w-72 h-72 ${slide.orbColor} rounded-full blur-[90px] pointer-events-none transition-colors duration-700`} />
-            <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-slate-800/20 rounded-full blur-[90px] pointer-events-none" />
+            <div className={`absolute top-0 right-0 w-72 h-72 ${slide.orbColor} rounded-full blur-3xl opacity-60 pointer-events-none transition-colors duration-700 transform-gpu`} />
+            <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-slate-800/30 rounded-full blur-3xl pointer-events-none transform-gpu" />
 
             {/* Dynamic Product Background Image */}
             {slide.image && (
               <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-                <div className="absolute right-[-15%] sm:right-[5%] top-1/2 -translate-y-1/2 w-56 h-56 sm:w-80 sm:h-80 opacity-40 sm:opacity-70 transition-opacity duration-700">
+                <div className="absolute right-[-15%] sm:right-[5%] top-1/2 -translate-y-1/2 w-56 h-56 sm:w-80 sm:h-80 opacity-40 sm:opacity-70 transition-opacity duration-700 transform-gpu">
                   <Image
                     src={slide.image}
                     alt="Apple Product"
                     fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
                     className="object-contain object-right transform group-hover:scale-105 transition-transform duration-1000"
                   />
                 </div>
                 {/* Fade gradient so text stays readable */}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent sm:w-2/3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent sm:w-2/3 transform-gpu" />
               </div>
             )}
 

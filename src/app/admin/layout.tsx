@@ -25,15 +25,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const pathname = usePathname();
     const [isRightMenuOpen, setIsRightMenuOpen] = useState(false);
 
-    // Bypass admin sidebar layout for login route
-    if (pathname === '/admin/login') {
-        return <>{children}</>;
-    }
-
-    const handleSignOut = () => {
-        localStorage.removeItem('joerich_user');
-        localStorage.removeItem('admin_session');
-        window.location.href = '/admin/login';
+    const handleSignOut = async () => {
+        const { createClient } = await import('@/utils/supabase/client');
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        window.location.href = '/login';
     };
 
     return (

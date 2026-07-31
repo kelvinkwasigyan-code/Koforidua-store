@@ -134,12 +134,12 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-8">Checkout</h1>
         
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
           
           {/* Left Column - Details */}
           <div className="lg:col-span-7 space-y-6">

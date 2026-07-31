@@ -25,11 +25,19 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [wishlistCount, setWishlistCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
         setWishlistCount(getWishlist().length);
         const handleWishlist = () => setWishlistCount(getWishlist().length);
         window.addEventListener('wishlistUpdated', handleWishlist);
+        
+        // Dynamically fetch user from supabase
+        import('@/utils/supabase/client').then(({ createClient }) => {
+            const supabase = createClient();
+            supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
+        });
+
         return () => window.removeEventListener('wishlistUpdated', handleWishlist);
     }, []);
 
@@ -62,6 +70,8 @@ export default function Header() {
                                 alt="Joe Rich Phones Logo"
                                 width={40}
                                 height={40}
+                                priority
+                                sizes="40px"
                                 className="object-contain rounded-xl shadow-xs"
                             />
                             <div className="font-[family-name:var(--font-outfit)] text-xl sm:text-3xl flex items-center gap-1.5 sm:gap-2">
@@ -81,7 +91,7 @@ export default function Header() {
                     </div>
 
                     {/* Search Bar */}
-                    <form 
+                    <form
                         onSubmit={(e) => {
                             e.preventDefault();
                             if (searchQuery.trim()) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendOrderConfirmation } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,6 +81,14 @@ export async function POST(request: NextRequest) {
         }
       }
     });
+
+    // Send confirmation email asynchronously (don't block the response)
+    if (customerEmail) {
+      sendOrderConfirmation(customerEmail, { total: totalAmount })
+        .then(res => {
+          if (!res.success) console.error('Failed to send confirmation email', res.error);
+        });
+    }
 
     return NextResponse.json({ success: true, orderId: newOrder.id }, { status: 201 });
   } catch (error: any) {

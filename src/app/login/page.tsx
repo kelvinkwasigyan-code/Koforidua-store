@@ -28,7 +28,7 @@ export default async function LoginPage({
 
         {/* Login Card */}
         <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-white">
-          <form className="space-y-5">
+          <form action={login} className="space-y-5">
             {error && (
               <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold text-center border border-red-100">
                 {error}
@@ -50,9 +50,14 @@ export default async function LoginPage({
             </div>
 
             <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-wider">
+                  Password
+                </label>
+                <Link href="/forgot-password" className="text-xs font-bold text-red-600 hover:underline">
+                  Forgot Password?
+                </Link>
+              </div>
               <input
                 id="password"
                 name="password"
@@ -64,7 +69,7 @@ export default async function LoginPage({
             </div>
 
             <button
-              formAction={login}
+              type="submit"
               className="w-full mt-6 bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
             >
               <span>Sign In</span>

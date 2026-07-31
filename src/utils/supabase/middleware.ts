@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options: any }[]) {
           cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
@@ -38,14 +38,12 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Protect Admin Routes
-  if (path.startsWith('/admin') && !user) {
-    // no user, potentially respond by redirecting the user to the login page
+  if (path.startsWith('/admin') && (!user || user.email?.toLowerCase() !== 'admin@joerichphones.com')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages
   if ((path.startsWith('/login') || path.startsWith('/register')) && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'

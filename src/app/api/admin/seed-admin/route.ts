@@ -1,44 +1,50 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import crypto from 'crypto';
-
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
-}
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 export async function GET() {
   try {
     const defaultEmail = 'admin@joerichphones.com';
     const defaultPassword = 'adminpassword123';
 
-    const hashedPassword = hashPassword(defaultPassword);
+    // Initialize Supabase Admin client to bypass RLS and create users directly
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
-    try {
-      await (prisma as any).$executeRawUnsafe(`
-        CREATE TABLE IF NOT EXISTS "User" (
-          "id" TEXT PRIMARY KEY,
-          "email" TEXT UNIQUE NOT NULL,
-          "password" TEXT NOT NULL,
-          "role" TEXT NOT NULL DEFAULT 'USER',
-          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-      `);
+    // 1. Check if user already exists
+    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (listError) {
+      throw new Error('Failed to fetch users: ' + listError.message);
+    }
 
-      await (prisma as any).$executeRawUnsafe(`
-        INSERT INTO "User" ("id", "email", "password", "role", "createdAt")
-        VALUES ('admin-id-001', '${defaultEmail}', '${hashedPassword}', 'ADMIN', NOW())
-        ON CONFLICT ("email")
-        DO UPDATE SET "password" = '${hashedPassword}', "role" = 'ADMIN';
-      `);
-    } catch (e: any) {
-      console.warn('DB seed raw error:', e?.message);
+    const existingAdmin = existingUsers.users.find(u => u.email === defaultEmail);
+
+    if (!existingAdmin) {
+      // 2. Create the user with email_confirm set to true
+      const { error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: defaultEmail,
+        password: defaultPassword,
+        email_confirm: true, // Automatically verify the email
+      });
+
+      if (createError) {
+        throw new Error('Failed to create admin: ' + createError.message);
+      }
+    } else {
+      // 3. If exists, ensure password is set to default and email is confirmed
+      await supabaseAdmin.auth.admin.updateUserById(existingAdmin.id, {
+        password: defaultPassword,
+        email_confirm: true,
+      });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Admin account initialized successfully!',
+      message: 'Admin account initialized successfully in Supabase Auth!',
       credentials: {
-        loginUrl: 'http://localhost:3000/admin/login',
+        loginUrl: 'http://localhost:3000/login',
         email: defaultEmail,
         password: defaultPassword,
       },
@@ -47,6 +53,6 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       error: error?.message || String(error),
-    });
+    }, { status: 500 });
   }
 }
